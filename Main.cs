@@ -9,7 +9,7 @@ namespace iSurvivedBonelab
     {
         public const string Name = "BLSurvival";
         public const string Author = "TheUltimateNuke";
-        public const string Version = "1.0.0";
+        public const string Version = "0.0.3";
     }
     
     public class Main : MelonMod
