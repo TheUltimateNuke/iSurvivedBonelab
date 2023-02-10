@@ -1,25 +1,24 @@
 ﻿using BoneLib.BoneMenu.Elements;
 using BoneLib.BoneMenu;
 using UnityEngine;
-using SLZ.Interaction;
 using System.IO;
 using MelonLoader;
-using System.Reflection;
-using UnhollowerBaseLib;
-using UnhollowerBaseLib.Runtime;
+using BoneLib;
 
 namespace iSurvivedBonelab
 {
     internal static class MenuStuff
     {
-        public static Color menuColor = new Color(173, 113, 0);
-        private static Vector3 hudOffset = new Vector3(Prefs.hudOffsetX, Prefs.hudOffsetY, Prefs.hudOffsetZ);
+        private static Color menuColor = new Color(173, 113, 0);
+
+        public static GameObject menuAsset;
+
         public static void CreateElements()
         {
             // Create root categ
             MenuCategory root_categ = MenuManager.CreateCategory("BLSurvival", menuColor);
 
-            // UI settings
+            // HUD settings
             SubPanelElement hud_categ = root_categ.CreateSubPanel("HUD Settings", menuColor);
             hud_categ.CreateFloatElement("Hud Offset X", menuColor, Prefs.hudOffsetX, 0.1f, -10f, 10f);
             hud_categ.CreateFloatElement("Hud Offset Y", menuColor, Prefs.hudOffsetY, 0.1f, -10f, 10f);
@@ -37,22 +36,17 @@ namespace iSurvivedBonelab
             root_categ.CreateBoolElement("Auto Enable Mod", menuColor, Prefs.autoEnable);
         }
 
-        // Instantiate the BLSurvival HUD on right or left hand with configurable positioning
-        public static void CreateHud(Hand hand) 
+        // Instantiate the BLSurvival HUD
+        public static void CreateHud()
         {
-            Transform spawnPos = hand.transform;
-
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string assetBundlePath = Path.Combine(assembly.Location, Path.Combine("Assets", "blsurvivalhud"));
+            string assetBundlePath = Path.Combine(Main.assembly.Location, Path.Combine("Assets", "blsurvivalhud"));
             AssetBundle localAssetBundle = AssetBundle.LoadFromFile(assetBundlePath);
 
-            if (localAssetBundle == null)
-            {
-                Melon<Main>.Logger.Error("failed to load BLSurvivalHUD AssetBundle. Please make sure you have your stuff set up correctly.");
-            }
+            if (localAssetBundle == null) Melon<Main>.Logger.Error("failed to load BLSurvivalHUD AssetBundle. Please make sure you have your stuff set up correctly.");
 
-            GameObject asset = (GameObject)localAssetBundle.LoadAsset("BLSurvivalHUDCanvas");
-            GameObject.Instantiate(asset);
+            menuAsset = (GameObject)localAssetBundle.LoadAsset("BLSurvivalHUDCanvas");
+            Object.Instantiate(menuAsset);
+            menuAsset.GetComponent<Canvas>().worldCamera = Camera.current;
             localAssetBundle.Unload(false);
         }
 
@@ -64,10 +58,20 @@ namespace iSurvivedBonelab
         }
         */
 
-        // OnUpdate in relation to HUD elements
-        public static void UpdateHud(Hand hand)
+        // Parent the hud to the set handTransform
+        public static void MoveHud(int hudHand)
         {
-            
+            Transform handTransform = Player.leftController.transform;
+            if (hudHand == 1) handTransform = Player.rightController.transform;
+
+            menuAsset.transform.parent = handTransform;
+            menuAsset.transform.localPosition = Prefs.hudOffset;
+        }
+
+        // OnUpdate in relation to HUD elements
+        public static void UpdateHud()
+        {
+            MoveHud(Prefs.hudHand);
         }
     }
 }

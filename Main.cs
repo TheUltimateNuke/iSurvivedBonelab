@@ -1,5 +1,6 @@
 ﻿using BoneLib;
 using MelonLoader;
+using System.Reflection;
 using UnityEngine;
 
 namespace iSurvivedBonelab
@@ -13,6 +14,8 @@ namespace iSurvivedBonelab
     
     public class Main : MelonMod
     {
+        public static Assembly assembly = Assembly.GetExecutingAssembly();
+
         public override void OnInitializeMelon()
         {
             // Create settings menu elements for BoneLib
@@ -24,50 +27,22 @@ namespace iSurvivedBonelab
 
         private void OnLevelInitialized(LevelInfo info)
         {
-            GameObject survivalObject = GameObject.Find("BLSURVIVAL_AUTOENABLE");
-            // Enable mod if the level has empty GameObject named BLSURVIVAL_AUTOENABLE or autoEnable toggled on
-            if (Prefs.autoEnable)
-            {
-                Prefs.enabled = true;
-                if (Prefs.hudHand == 1)
-                {
-                    MenuStuff.CreateHud(Player.rightHand);
-                }
-                else
-                {
-                    MenuStuff.CreateHud(Player.leftHand);
-                }
-            }
-            else if (survivalObject)
-            {
-                Prefs.enabled = true;
-                if (Prefs.hudHand == 1)
-                {
-                    MenuStuff.CreateHud(Player.rightHand);
-                }
-                else
-                {
-                    MenuStuff.CreateHud(Player.leftHand);
-                }
-                GameObject.Destroy(survivalObject);
-            }
-            else 
-            { 
-                Prefs.enabled = false;
-            }
+            if (Prefs.enabled) MenuStuff.CreateHud();
         }
 
         public override void OnUpdate()
         {
-            if (Prefs.hudHand == 1)
-            {
-                MenuStuff.UpdateHud(Player.rightHand);
-            }
-            else 
-            {
-                MenuStuff.UpdateHud(Player.leftHand);
-            }
-            
+            Prefs.enabled = CheckEnabled();
+
+            MenuStuff.UpdateHud();
+        }
+        
+        // Enable mod if the level has empty GameObject named BLSURVIVAL_AUTOENABLE or autoEnable toggled on
+        public static bool CheckEnabled()
+        {
+            if (Prefs.autoEnable) return true;
+            else if (GameObject.Find("BLSURVIVAL_AUTOENABLE")) return true;
+            else return false;
         }
     }
 }
