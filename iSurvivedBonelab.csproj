@@ -54,6 +54,10 @@
     <Reference Include="MelonLoader">
       <HintPath>D:\Software\Oculus\Software\Software\stress-level-zero-inc-bonelab\MelonLoader\MelonLoader.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Software\Oculus\Software\Software\stress-level-zero-inc-bonelab\MelonLoader\Managed\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>D:\Software\Oculus\Software\Software\stress-level-zero-inc-bonelab\MelonLoader\Managed\UnityEngine.dll</HintPath>
     </Reference>
@@ -75,8 +79,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Prefs.cs" />
     <Compile Include="MenuStuff.cs" />
+    <Compile Include="NeedsStuff.cs" />
+    <Compile Include="Prefs.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
