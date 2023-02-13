@@ -1,6 +1,6 @@
 # iSurvivedBonelab
 ## Description
-BLSurvival/iSurvivedBonelab is a WIP modification for BoneLab utilizing MelonLoader (PC only). The goal of this mod is to allow modders to incorporate traditional survival elements into their levels and spawnables, while also giving the user the choice to configure everything and opt in/out at any point.  
+BLSurvival or iSurvivedBonelab is a WIP modification for BoneLab utilizing MelonLoader (PC only). The goal of this mod is to allow modders to incorporate traditional survival elements into their levels and spawnables, while also giving the user the choice to configure everything and opt in/out at any point.  
 
 ## Requirements
 - BoneLab
