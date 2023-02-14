@@ -17,6 +17,8 @@ BLSurvival or iSurvivedBonelab is a WIP modification for BoneLab utilizing Melon
 - Thirst system with support for modders to add custom drink spawnables.
 - Disease system with support for modders to add custom diseases, causes, and effects.
 - Temperature system with support for level creators to add trigger-based temperature volumes.
-- Random spawning of food, water, guns, ammo, etc. with support for modders to add custom random spawnpoints.
+- Crafting system with support for custom recipes, workbenches, and resources.
+- Periodic wave-based enemy spawning on maps that support it, to simulate Minecraft's night mob system. (toggleable by user ofc)
+- Random spawning of food, water, guns, ammo, etc. with support for modders to add custom random spawn points.
 - Optional sample level showing off all major features
 - Backpack spawnable with an array of holsters for storing things.
