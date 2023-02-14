@@ -100,7 +100,7 @@ namespace iSurvivedBonelab
             }
         }
 
-        internal static void DestroyHud()
+        private static void DestroyHud()
         {
             if (menuAsset != null) GameObject.Destroy(menuAsset);
         }
@@ -165,13 +165,13 @@ namespace iSurvivedBonelab
         private static void FoodGauge()
         {
             Image gaugeBar = menuAsset.transform.Find("Rot").Find("Gauges").Find("FoodGauge").Find("bar").GetComponent<Image>();
-            gaugeBar.fillAmount = Prefs.curHungerEnt.Value;
+            gaugeBar.fillAmount = Prefs.curHungerEnt.Value / Prefs.maxHungerEnt.Value;
         }
 
         private static void WaterGauge()
         {
             Image gaugeBar = menuAsset.transform.Find("Rot").Find("Gauges").Find("ThirstGauge").Find("bar").GetComponent<Image>();
-            gaugeBar.fillAmount = Prefs.curThirstEnt.Value;
+            gaugeBar.fillAmount = Prefs.curThirstEnt.Value / Prefs.maxThirstEnt.Value;
         }
     }
 }
