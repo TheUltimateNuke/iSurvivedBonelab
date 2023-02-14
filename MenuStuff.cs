@@ -139,10 +139,9 @@ namespace iSurvivedBonelab
             Hand hand = Player.leftHand;
             if (hudHand == 1) hand = Player.rightHand;
 
-            Transform wrist = hand.transform;
             menuAsset.transform.parent = hand.transform;
-            menuAsset.transform.position = wrist.position + Prefs.hudOffsetEnt.Value;
-            menuAsset.transform.rotation = wrist.rotation;
+            menuAsset.transform.position = hand.transform.position + Prefs.hudOffsetEnt.Value;
+            menuAsset.transform.rotation = hand.transform.rotation;
         }
 
         // OnUpdate in relation to HUD elements
