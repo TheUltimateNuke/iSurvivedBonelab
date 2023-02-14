@@ -3,9 +3,9 @@ using BoneLib.BoneMenu;
 using BoneLib.BoneMenu.Elements;
 using MelonLoader;
 using SLZ.Interaction;
-using SLZ.Marrow.Utilities;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace iSurvivedBonelab
 {
@@ -26,8 +26,13 @@ namespace iSurvivedBonelab
         private static IntElement hudHandEle;
 
         private static FloatElement hungerDecayTimeEle;
+        private static IntElement hungerDecayAmountEle;
+        private static IntElement maxHungerEle;
 
         private static FloatElement thirstDecayTimeEle;
+        private static IntElement thirstDecayAmountEle;
+        private static IntElement maxThirstEle;
+
 
         internal static void CreateElements()
         {
@@ -45,20 +50,27 @@ namespace iSurvivedBonelab
             // Create settings subpanels for each system
             // Hunger Settings
             SubPanelElement hunger_categ = root_categ.CreateSubPanel("Hunger Settings", menuColor);
-            hungerDecayTimeEle = hunger_categ.CreateFloatElement("Hunger Decay Time", menuColor, 5f, 1f, 0.5f, 100f);
+            hungerDecayTimeEle = hunger_categ.CreateFloatElement("Hunger Decay Time", menuColor, Prefs.hungerDecayTimeEnt.Value, 0.5f, 0.5f, 100f);
+            hungerDecayAmountEle = hunger_categ.CreateIntElement("Hunger Decay Amount", menuColor, Prefs.hungerDecayAmount.Value, 1, 1, 100);
+            maxHungerEle = hunger_categ.CreateIntElement("Max Hunger", menuColor, Prefs.maxHungerEnt.Value, 10, 10, int.MaxValue);
 
             // Thirst Settings
             SubPanelElement thirst_categ = root_categ.CreateSubPanel("Thirst Settings", menuColor);
-            thirstDecayTimeEle = thirst_categ.CreateFloatElement("Thirst Decay Time", menuColor, 4.5f, 1f, 0.5f, 100f);
+            thirstDecayTimeEle = thirst_categ.CreateFloatElement("Thirst Decay Time", menuColor, Prefs.thirstDecayTimeEnt.Value, 0.5f, 0.5f, 100f);
+            thirstDecayAmountEle = hunger_categ.CreateIntElement("Thirst Decay Amount", menuColor, Prefs.thirstDecayAmount.Value, 1, 1, 100);
+            maxThirstEle = thirst_categ.CreateIntElement("Max Thirst", menuColor, Prefs.maxThirstEnt.Value, 10, 10, int.MaxValue);
+
 
             // Temperature Settings
             SubPanelElement tempur_categ = root_categ.CreateSubPanel("Temperature Settings", menuColor);
+            tempur_categ.CreateFunctionElement("TBD", menuColor, () => Melon<Main>.Logger.Msg("Player pressed useless FunctionElement!"));
 
             // Disease Settings
             SubPanelElement disease_categ = root_categ.CreateSubPanel("Disease Settings", menuColor);
+            disease_categ.CreateFunctionElement("TBD", menuColor, () => Melon<Main>.Logger.Msg("Player pressed useless FunctionElement!"));
 
             // Create root settings
-            autoEnableEle = root_categ.CreateBoolElement("Auto Enable Mod", menuColor, true);
+            autoEnableEle = root_categ.CreateBoolElement("Enable Mod", menuColor, true);
         }
 
         // Instantiate the BLSurvival HUD
@@ -88,13 +100,13 @@ namespace iSurvivedBonelab
             }
         }
 
-        public static void DestroyHud()
+        internal static void DestroyHud()
         {
             if (menuAsset != null) GameObject.Destroy(menuAsset);
         }
 
         // OnUpdate in relation to HUD settings
-        public static void UpdateSettings()
+        internal static void UpdateSettings()
         {
             // hilariously unoptimized but it should do the job. if anyone sees this and knows how to do this a better way, please do so.
             // Update the prefs according to the BoneMenu element values
@@ -112,19 +124,23 @@ namespace iSurvivedBonelab
 
             // Hunger Prefs
             Prefs.hungerDecayTimeEnt.Value = hungerDecayTimeEle.Value;
+            Prefs.hungerDecayAmount.Value = hungerDecayAmountEle.Value;
+            Prefs.maxHungerEnt.Value = maxHungerEle.Value;
 
             // Thirst Prefs
             Prefs.thirstDecayTimeEnt.Value = thirstDecayTimeEle.Value;
+            Prefs.thirstDecayAmount.Value = thirstDecayAmountEle.Value;
+            Prefs.maxThirstEnt.Value = maxThirstEle.Value;
         }
 
         // Parent the hud to the set hudHand
         private static void MoveHud(int hudHand)
         {
-            Transform handTransform = Player.leftHand.transform;
-            if (hudHand == 1) handTransform = Player.rightHand.transform;
+            Hand hand = Player.leftHand;
+            if (hudHand == 1) hand = Player.rightHand;
 
-            SimpleTransform wrist = handTransform.GetComponent<Hand>().GetControllerWristTransform(true);
-            menuAsset.transform.parent = handTransform;
+            Transform wrist = hand.transform;
+            menuAsset.transform.parent = hand.transform;
             menuAsset.transform.position = wrist.position + Prefs.hudOffsetEnt.Value;
             menuAsset.transform.rotation = wrist.rotation;
         }
@@ -136,7 +152,8 @@ namespace iSurvivedBonelab
             {
                 MoveHud(Prefs.hudHandEnt.Value);
 
-                //FoodGauge();
+                FoodGauge();
+                WaterGauge();
             }
             else DestroyHud();
 
@@ -144,6 +161,18 @@ namespace iSurvivedBonelab
             {
                 CreateHud();
             }
+        }
+
+        private static void FoodGauge()
+        {
+            Image gaugeBar = menuAsset.transform.Find("Rot").Find("Gauges").Find("FoodGauge").Find("bar").GetComponent<Image>();
+            gaugeBar.fillAmount = Prefs.curHungerEnt.Value;
+        }
+
+        private static void WaterGauge()
+        {
+            Image gaugeBar = menuAsset.transform.Find("Rot").Find("Gauges").Find("ThirstGauge").Find("bar").GetComponent<Image>();
+            gaugeBar.fillAmount = Prefs.curThirstEnt.Value;
         }
     }
 }

@@ -19,7 +19,10 @@ namespace iSurvivedBonelab
         public override void OnInitializeMelon()
         {
             // Create MelonPreferences values
-            Prefs.CreatePrefs();
+            if (MelonPreferences.GetCategory("BLSurvivalSettings").Equals(null))
+                Prefs.CreatePrefs();
+            else
+                Prefs.LoadMelonPrefs();
 
             // Create settings menu elements for BoneLib
             MenuStuff.CreateElements();
@@ -33,11 +36,12 @@ namespace iSurvivedBonelab
         {
             if (Prefs.enabledEnt.Value)
             {
-                if (Prefs.hudEnabledEnt.Value && !(info.title == "Main Menu" || info.title == "Void G114"))
+                if (Prefs.hudEnabledEnt.Value && !(info.title.Equals("00 - Main Menu") || info.title.Equals("15 - Void G114")))
                 {
                     MenuStuff.CreateHud();
                 }
             }
+            NeedsStuff.ResetHungerTimer();
         }
 
         public override void OnUpdate()
@@ -46,17 +50,23 @@ namespace iSurvivedBonelab
 
             MenuStuff.UpdateHud();
             MenuStuff.UpdateSettings();
+            NeedsStuff.UpdateHunger();
         }
 
         // Enable mod if the level has empty GameObject named BLSURVIVAL_AUTOENABLE or autoEnable toggled on
         public static bool CheckEnabled()
         {
             if (Prefs.autoEnableEnt.Value) { return true; }
-            else if (GameObject.Find("BLSURVIVAL" + "AUTOENABLE")) { return true; }
+            else if (GameObject.Find("BLSURVIVAL_" + "AUTOENABLE")) { return true; }
             else { return false; }
         }
 
         private void OnLevelUnloaded()
+        {
+            Prefs.SaveMelonPrefs();
+        }
+
+        public override void OnDeinitializeMelon()
         {
             Prefs.SaveMelonPrefs();
         }
