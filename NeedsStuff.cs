@@ -1,21 +1,25 @@
-﻿using UnityEngine;
+﻿using BoneLib;
+using Il2CppSystem;
+using SLZ.Rig;
+using UnityEngine;
 
 namespace iSurvivedBonelab
 {
-    internal static class NeedsStuff
+    public class NeedsStuff
     {
-        private static float hungerTimer;
-        private static bool warned;
+        private static float _hungerTimer = Prefs.hungerDecayTimeEnt.Value;
+        private static bool _hungerWarned;
 
         internal static void ResetHungerTimer()
         {
-            warned = false;
-            hungerTimer = Prefs.hungerDecayTimeEnt.Value;
+            _hungerWarned = false;
+            _hungerTimer = Prefs.hungerDecayTimeEnt.Value;
         }
 
         internal static void UpdateHunger()
         {
-            if (hungerTimer > 0) hungerTimer -= Time.deltaTime;
+            Prefs.curHungerEnt.Value = Mathf.Clamp(Prefs.curHungerEnt.Value, 0, Prefs.maxHungerEnt.Value);
+            if (_hungerTimer > 0) _hungerTimer -= Time.deltaTime;
             else
             {
                 ResetHungerTimer();
@@ -30,21 +34,24 @@ namespace iSurvivedBonelab
             {
                 WarnHunger();
             }
-            if (Prefs.curHungerEnt.Value <= 0) Starve();
+            else if (Prefs.curHungerEnt.Value <= 0) Starve();
+            ResetHungerTimer();
         }
 
         public static void WarnHunger()
         {
-            if (!warned)
+            if (!_hungerWarned)
             {
-                warned = true;
+                _hungerWarned = true;
                 // TODO: Play warning sound
             }
         }
 
         public static void Starve() 
-        { 
-            
+        {
+            Player_Health _playerHealthManager = Player.rigManager.GetComponentInChildren<Player_Health>();
+            _playerHealthManager.Death();
         }
+
     }
 }

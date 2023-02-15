@@ -19,7 +19,7 @@ namespace iSurvivedBonelab
         public override void OnInitializeMelon()
         {
             // Create MelonPreferences values
-            if (MelonPreferences.GetCategory("BLSurvivalSettings").Equals(null))
+            if (MelonPreferences.GetCategory("BLSurvivalSettings") == null)
                 Prefs.CreatePrefs();
             else
                 Prefs.LoadMelonPrefs();
@@ -34,14 +34,15 @@ namespace iSurvivedBonelab
 
         private void OnLevelInitialized(LevelInfo info)
         {
+            NeedsStuff.ResetHungerTimer();
             if (Prefs.enabledEnt.Value)
             {
+                // Create HUD if not in main menu (doesn't work for some reason?)
                 if (Prefs.hudEnabledEnt.Value && !(info.title.Equals("00 - Main Menu") || info.title.Equals("15 - Void G114")))
                 {
                     MenuStuff.CreateHud();
                 }
             }
-            NeedsStuff.ResetHungerTimer();
         }
 
         public override void OnUpdate()

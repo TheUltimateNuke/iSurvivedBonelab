@@ -47,13 +47,13 @@ namespace iSurvivedBonelab
             hudHandEnt = root_categ.CreateEntry("HudHand", 0);
 
             // Hunger prefs
-            hungerDecayTimeEnt = root_categ.CreateEntry("HungerDecayTime", 45f);
+            hungerDecayTimeEnt = root_categ.CreateEntry("HungerDecayTime", 10f); //TODO: Change to a higher value before release
             hungerDecayAmount = root_categ.CreateEntry("HungerDecayAmount", 1);
             maxHungerEnt = root_categ.CreateEntry("MaxHunger", 100);
             curHungerEnt = root_categ.CreateEntry("_curHunger", maxHungerEnt.Value, is_hidden: true);
 
             // Thirst prefs
-            thirstDecayTimeEnt = root_categ.CreateEntry("ThirstDecayTime", 25f);
+            thirstDecayTimeEnt = root_categ.CreateEntry("ThirstDecayTime", 10f); //TODO: Change to a higher value before release
             thirstDecayAmount = root_categ.CreateEntry("ThirstDecayAmount", 2);
             maxThirstEnt = root_categ.CreateEntry("MaxThirst", 100);
             curThirstEnt = root_categ.CreateEntry("_curThirst", maxThirstEnt.Value, is_hidden: true);
