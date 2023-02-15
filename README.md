@@ -22,3 +22,4 @@ BLSurvival or iSurvivedBonelab is a WIP modification for BoneLab utilizing Melon
 - Random spawning of food, water, guns, ammo, etc. with support for modders to add custom random spawn points.
 - Optional sample level showing off all major features
 - Backpack spawnable with an array of holsters for storing things.
+- Sanity system (killing neutral/passive npcs and standing in the dark for too long reduces it)
