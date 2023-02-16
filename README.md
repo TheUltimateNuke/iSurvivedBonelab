@@ -23,3 +23,6 @@ BLSurvival or iSurvivedBonelab is a WIP modification for BoneLab utilizing Melon
 - Optional sample level showing off all major features
 - Backpack spawnable with an array of holsters for storing things.
 - Sanity system (killing neutral/passive npcs and standing in the dark for too long reduces it)
+- Stamina system (hitting things depletes stamina, makes you weaker when fully depleted)
+- All systems compatible with UltEvents
+- Full wiki documentation
