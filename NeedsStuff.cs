@@ -57,11 +57,22 @@ namespace iSurvivedBonelab
         #endregion Hunger Methods
 
         #region Thirst Methods
+
         internal static void ResetThirstTimer()
         {
             _thirstWarned = false;
             _thirstTimer = Prefs.thirstDecayTimeEnt.Value;
         }
+
+        private static void WarnThirst()
+        {
+            if (!_thirstWarned)
+            {
+                _thirstWarned = true;
+                // TODO: Play warning sound
+            }
+        }
+
         internal static void UpdateThirst()
         {
             Prefs.curThirstEnt.Value = Mathf.Clamp(Prefs.curThirstEnt.Value, 0, Prefs.maxThirstEnt.Value);
@@ -76,9 +87,17 @@ namespace iSurvivedBonelab
         private static void OnThirstTimerUp()
         {
             Prefs.curThirstEnt.Value -= Prefs.thirstDecayAmountEnt.Value;
-            if (Prefs.curHungerEnt.Value <= Prefs.maxHungerEnt.Value / 2) WarnHunger();
-            if (Prefs.curHungerEnt.Value <= 0) Starve();
+            if (Prefs.curHungerEnt.Value <= Prefs.maxHungerEnt.Value / 2) WarnThirst();
+            if (Prefs.curHungerEnt.Value <= 0) Dehydrate();
             ResetHungerTimer();
+        }
+
+        private static void Dehydrate()
+        {
+            // TODO: Play warning sound slightly lower pitched
+            Player_Health _playerHealthManager = Player.rigManager.GetComponentInChildren<Player_Health>();
+            _playerHealthManager.Death();
+            ResetThirstTimer();
         }
 
         #endregion Thirst Methods
