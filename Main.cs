@@ -50,6 +50,9 @@ namespace iSurvivedBonelab
             else
                 Prefs.LoadMelonPrefs();
 
+            // Create default needs
+            NeedsStuff.CreateNeeds();
+
             // Create settings menu elements for BoneLib
             MenuStuff.CreateElements();
 
@@ -60,7 +63,6 @@ namespace iSurvivedBonelab
 
         private void OnLevelInitialized(LevelInfo info)
         {
-            NeedsStuff.ResetHungerTimer();
             if (Prefs.enabledEnt.Value)
             {
                 // Create HUD if not in main menu (doesn't work for some reason?)
@@ -79,10 +81,7 @@ namespace iSurvivedBonelab
             {
                 MenuStuff.UpdateHud();
                 MenuStuff.UpdateSettings();
-                if (Prefs.hungerEnabledEnt.Value)
-                {
-                    NeedsStuff.UpdateHunger();
-                }
+                NeedsStuff.Update();
             }
   
         }

@@ -1,120 +1,85 @@
-﻿using BoneLib;
-using iSurvivedBonelab.MonoBehaviours;
-using System;
+﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace iSurvivedBonelab
 {
     public static class NeedsStuff
     {
-        private static float _hungerTimer = Prefs.hungerDecayTimeEnt.Value;
-        private static float _thirstTimer = Prefs.thirstDecayTimeEnt.Value;
-        private static bool _hungerWarned;
-        private static bool _thirstWarned;
+        public static Need hungerNeed;
+        public static Need thirstNeed;
 
-        #region Hunger Methods
-        internal static void ResetHungerTimer()
-        {
-            _hungerWarned = false;
-            _hungerTimer = Prefs.hungerDecayTimeEnt.Value;
-        }
+        public static float noHungerHealthDecay;
 
-        internal static void UpdateHunger()
+        public static void CreateNeeds()
         {
-            Prefs.curHungerEnt.Value = Mathf.Clamp(Prefs.curHungerEnt.Value, 0, Prefs.maxHungerEnt.Value);
-            if (_hungerTimer > 0) _hungerTimer -= Time.deltaTime;
-            else
+            hungerNeed = new Need
             {
-                ResetHungerTimer();
-                OnHungerTimerUp();
-            }
-        }
+                displayName = "Hunger",
+                enabled = true,
+                maxValue = 100,
+                startValue = hungerNeed.maxValue,
+                decayRate = 1f
+            };
 
-        private static void OnHungerTimerUp()
-        {
-            Prefs.curHungerEnt.Value -= Prefs.hungerDecayAmountEnt.Value;
-            if (Prefs.curHungerEnt.Value <= Prefs.maxHungerEnt.Value / 2) WarnHunger();
-            if (Prefs.curHungerEnt.Value <= 0) Starve();
-            ResetHungerTimer();
-        }
-
-        private static void WarnHunger()
-        {
-            if (!_hungerWarned)
+            thirstNeed = new Need
             {
-                _hungerWarned = true;
-                // TODO: Play warning sound
-            }
+                displayName = "Thirst",
+                enabled = true,
+                maxValue = 100,
+                startValue = thirstNeed.maxValue,
+                decayRate = 2f
+            };
         }
 
-        private static void Starve() 
+        internal static void Update()
         {
-            // TODO: Play warning sound slightly lower pitched
-            Player_Health _playerHealthManager = Player.rigManager.GetComponentInChildren<Player_Health>();
-            _playerHealthManager.Death();
-            ResetHungerTimer();
+            hungerNeed.BindPrefs();
+            thirstNeed.BindPrefs();
+
+            hungerNeed.Subtract(hungerNeed.decayRate * Time.deltaTime);
+            thirstNeed.Subtract(thirstNeed.decayRate * Time.deltaTime);
         }
-        #endregion Hunger Methods
+    }
 
-        #region Thirst Methods
+    [System.Serializable]
+    public class Need
+    {
+        public NeedPref prefs;
 
-        internal static void ResetThirstTimer()
+        public string displayName;
+        public bool enabled;
+        public float curValue;
+        public float maxValue;
+        public float startValue;
+        public float decayRate;
+
+        public void Add(float amount)
         {
-            _thirstWarned = false;
-            _thirstTimer = Prefs.thirstDecayTimeEnt.Value;
-        }
-
-        private static void WarnThirst()
-        {
-            if (!_thirstWarned)
-            {
-                _thirstWarned = true;
-                // TODO: Play warning sound
-            }
-        }
-
-        internal static void UpdateThirst()
-        {
-            Prefs.curThirstEnt.Value = Mathf.Clamp(Prefs.curThirstEnt.Value, 0, Prefs.maxThirstEnt.Value);
-            if (_thirstTimer > 0) _thirstTimer -= Time.deltaTime;
-            else
-            {
-                ResetThirstTimer();
-                OnThirstTimerUp();
-            }
+            curValue = Mathf.Min(curValue + amount, maxValue);
         }
 
-        private static void OnThirstTimerUp()
+        public void Subtract(float amount)
         {
-            Prefs.curThirstEnt.Value -= Prefs.thirstDecayAmountEnt.Value;
-            if (Prefs.curHungerEnt.Value <= Prefs.maxHungerEnt.Value / 2) WarnThirst();
-            if (Prefs.curHungerEnt.Value <= 0) Dehydrate();
-            ResetHungerTimer();
+            curValue = Mathf.Min(curValue - amount, 0.0f);
         }
 
-        private static void Dehydrate()
+        public float GetPercentage()
         {
-            // TODO: Play warning sound slightly lower pitched
-            Player_Health _playerHealthManager = Player.rigManager.GetComponentInChildren<Player_Health>();
-            _playerHealthManager.Death();
-            ResetThirstTimer();
+            return curValue / maxValue;
         }
 
-        #endregion Thirst Methods
-
-        public static void Bite(Consumable consumable)
+        public Need()
         {
-            switch (consumable.type)
-            {
-                case Consumable.ConsumableType.Food:
-                    Prefs.curHungerEnt.Value += consumable.PointsGivenPerBite;
-                    ResetHungerTimer();
-                    break;
-                case Consumable.ConsumableType.Drink:
-                    Prefs.curThirstEnt.Value += consumable.PointsGivenPerBite;
-                    ResetThirstTimer();
-                    break;
-            }
+            prefs = new NeedPref(this, MelonLoader.MelonPreferences.GetCategory("BLSurvivalSettings"));
+        }
+
+        public void BindPrefs()
+        {
+            prefs.maxValueEnt.Value = maxValue;
+            prefs.startValueEnt.Value = startValue;
+            prefs.curValueEnt.Value = curValue;
+            prefs.decayRateEnt.Value = decayRate;
         }
     }
 }

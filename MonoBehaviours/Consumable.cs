@@ -8,22 +8,16 @@ namespace iSurvivedBonelab.MonoBehaviours
 {
     public class Consumable : MonoBehaviour
     {
-        public enum ConsumableType
-        {
-            Food,
-            Drink,
-            Medicine
-        }
-        public ConsumableType type;
+        public Need type;
 
         public AudioClip[] biteSounds;
         public AudioClip[] consumeSounds;
         
         public AudioSource audioOutput;
 
-        public Blip BlipScript;
+        public Blip blipScript;
 
-        public int MaxBites = 1;
+        public int maxBites = 1;
 
         public int PointsGivenPerBite = 15;
 
@@ -36,38 +30,22 @@ namespace iSurvivedBonelab.MonoBehaviours
 
         private void Awake()
         {
-            switch (type)
+            if (!type.enabled)
             {
-                case ConsumableType.Food:
-                    if (!Prefs.hungerEnabledEnt.Value)
-                    {
-                        gameObject.SetActive(false);
-                    }
-                    break;
-                case ConsumableType.Drink:
-                    if (!Prefs.thirstEnabledEnt.Value)
-                    {
-                        gameObject.SetActive(false);
-                    }
-                    break;
-                default:
-                    gameObject.SetActive(false);
-                    Melon<Main>.Logger.Msg("ConsumableType of " + gameObject.name + " is invalid, setting to inactive");
-                    break;
-                // TODO: Add medicine system for disease
+                gameObject.SetActive(false);
             }
-            _curBites = MaxBites;
+            _curBites = maxBites;
         }
 
         private void OnTriggerEnter(Collider collider)
         {
             if (collider.CompareTag(MouthTag))
             {
-                NeedsStuff.Bite(this);
+                type.Add(PointsGivenPerBite);
                 onBite.Invoke(collider, this);
                 if (_curBites <= 1) {
                     onConsumed.Invoke(collider, this);
-                    BlipScript.Despawn();
+                    if (blipScript) blipScript.Despawn();
                     PlayRandomSound(consumeSounds);
                 }
                 else {

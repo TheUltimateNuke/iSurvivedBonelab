@@ -3,6 +3,27 @@ using UnityEngine;
 
 namespace iSurvivedBonelab
 {
+    public class NeedPref {
+        public string prefName;
+        public MelonPreferences_Entry<bool> enabledEnt;
+        public MelonPreferences_Entry<float> curValueEnt;
+        public MelonPreferences_Entry<float> maxValueEnt;
+        public MelonPreferences_Entry<float> startValueEnt;
+        public MelonPreferences_Entry<float> decayRateEnt;
+
+        public NeedPref(Need need, MelonPreferences_Category category)
+        {
+            if (MelonPreferences.GetCategory("BLSurvivalSettings") == null)
+            {
+                enabledEnt = category.CreateEntry(prefName + nameof(enabledEnt), need.enabled, need.displayName);
+                curValueEnt = category.CreateEntry(prefName + nameof(curValueEnt), need.curValue, need.displayName);
+                maxValueEnt = category.CreateEntry(prefName + nameof(maxValueEnt), need.maxValue, need.displayName);
+                startValueEnt = category.CreateEntry(prefName + nameof(startValueEnt), need.startValue, need.displayName);
+                decayRateEnt = category.CreateEntry(prefName + nameof(decayRateEnt), need.decayRate, need.displayName);
+            }
+        }
+    }
+
     internal static class Prefs
     {
         //private static string savePath = MelonUtils.UserDataDirectory + "/TheUltimateNuke/iSurvivedBonelab.cfg";
@@ -21,18 +42,6 @@ namespace iSurvivedBonelab
         internal static MelonPreferences_Entry<int> hudHandEnt;
         internal static MelonPreferences_Entry<int> hudTypeEnt;
 
-        internal static MelonPreferences_Entry<bool> hungerEnabledEnt;
-        internal static MelonPreferences_Entry<float> hungerDecayTimeEnt;
-        internal static MelonPreferences_Entry<int> hungerDecayAmountEnt;
-        internal static MelonPreferences_Entry<int> maxHungerEnt;
-        internal static MelonPreferences_Entry<int> curHungerEnt;
-        
-        internal static MelonPreferences_Entry<bool> thirstEnabledEnt;
-        internal static MelonPreferences_Entry<float> thirstDecayTimeEnt;
-        internal static MelonPreferences_Entry<int> thirstDecayAmountEnt;
-        internal static MelonPreferences_Entry<int> maxThirstEnt;
-        internal static MelonPreferences_Entry<int> curThirstEnt;
-
         internal static void CreatePrefs()
         {
             root_categ = MelonPreferences.CreateCategory("BLSurvivalSettings");
@@ -49,20 +58,6 @@ namespace iSurvivedBonelab
             hudOffsetEnt = root_categ.CreateEntry("_hudOffset", new Vector3(hudOffsetXEnt.Value, hudOffsetYEnt.Value, hudOffsetZEnt.Value), is_hidden: true);
             hudHandEnt = root_categ.CreateEntry("HudHand", 0);
             hudTypeEnt = root_categ.CreateEntry("HudType", 0);
-
-            // Hunger prefs
-            hungerEnabledEnt = root_categ.CreateEntry("HungerEnabled", true);
-            hungerDecayTimeEnt = root_categ.CreateEntry("HungerDecayTime", 10f); //TODO: Change to a higher value before release
-            hungerDecayAmountEnt = root_categ.CreateEntry("HungerDecayAmount", 1);
-            maxHungerEnt = root_categ.CreateEntry("MaxHunger", 100);
-            curHungerEnt = root_categ.CreateEntry("_curHunger", maxHungerEnt.Value, is_hidden: true);
-
-            // Thirst prefs
-            thirstEnabledEnt = root_categ.CreateEntry("ThirstEnabled", true);
-            thirstDecayTimeEnt = root_categ.CreateEntry("ThirstDecayTime", 10f); //TODO: Change to a higher value before release
-            thirstDecayAmountEnt = root_categ.CreateEntry("ThirstDecayAmount", 2);
-            maxThirstEnt = root_categ.CreateEntry("MaxThirst", 100);
-            curThirstEnt = root_categ.CreateEntry("_curThirst", maxThirstEnt.Value, is_hidden: true);
         }
 
         internal static void SaveMelonPrefs()

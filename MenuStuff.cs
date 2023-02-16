@@ -27,14 +27,14 @@ namespace iSurvivedBonelab
         private static IntElement hudTypeEle;
 
         private static BoolElement hungerEnabledEle;
-        private static FloatElement hungerDecayTimeEle;
-        private static IntElement hungerDecayAmountEle;
-        private static IntElement maxHungerEle;
+        private static FloatElement hungerDecayRateEle;
+        private static FloatElement hungerStartValueEle;
+        private static FloatElement maxHungerEle;
 
         private static BoolElement thirstEnabledEle;
-        private static FloatElement thirstDecayTimeEle;
-        private static IntElement thirstDecayAmountEle;
-        private static IntElement maxThirstEle;
+        private static FloatElement thirstDecayRateEle;
+        private static FloatElement thirstStartValueEle;
+        private static FloatElement maxThirstEle;
 
 
         internal static void CreateElements()
@@ -54,18 +54,17 @@ namespace iSurvivedBonelab
             // Create settings subpanels for each system
             // Hunger Settings
             SubPanelElement hunger_categ = root_categ.CreateSubPanel("Hunger Settings", menuColor);
-            hungerEnabledEle = hud_categ.CreateBoolElement("Hunger Enabled", menuColor, Prefs.hungerEnabledEnt.Value);
-            hungerDecayTimeEle = hunger_categ.CreateFloatElement("Hunger Decay Time", menuColor, Prefs.hungerDecayTimeEnt.Value, 0.5f, 0.5f, float.MaxValue);
-            hungerDecayAmountEle = hunger_categ.CreateIntElement("Hunger Decay Amount", menuColor, Prefs.hungerDecayAmountEnt.Value, 1, 1, int.MaxValue);
-            maxHungerEle = hunger_categ.CreateIntElement("Max Hunger", menuColor, Prefs.maxHungerEnt.Value, 10, 10, int.MaxValue);
+            hungerEnabledEle = hud_categ.CreateBoolElement("Hunger Enabled", menuColor, NeedsStuff.hungerNeed.enabled);
+            hungerDecayRateEle = hunger_categ.CreateFloatElement("Hunger Decay Rate", menuColor, NeedsStuff.hungerNeed.decayRate, 0.5f, 0.5f, float.MaxValue);
+            hungerStartValueEle = hunger_categ.CreateFloatElement("Hunger Start Value", menuColor, NeedsStuff.hungerNeed.startValue, 0.5f, 0.5f, float.MaxValue);
+            maxHungerEle = hunger_categ.CreateFloatElement("Max Hunger", menuColor, NeedsStuff.hungerNeed.maxValue, 10, 10, float.MaxValue);
 
             // Thirst Settings
             SubPanelElement thirst_categ = root_categ.CreateSubPanel("Thirst Settings", menuColor);
-            thirstEnabledEle = hud_categ.CreateBoolElement("Thirst Enabled", menuColor, Prefs.thirstEnabledEnt.Value);
-            thirstDecayTimeEle = thirst_categ.CreateFloatElement("Thirst Decay Time", menuColor, Prefs.thirstDecayTimeEnt.Value, 0.5f, 0.5f, float.MaxValue);
-            thirstDecayAmountEle = hunger_categ.CreateIntElement("Thirst Decay Amount", menuColor, Prefs.thirstDecayAmountEnt.Value, 1, 1, int.MaxValue);
-            maxThirstEle = thirst_categ.CreateIntElement("Max Thirst", menuColor, Prefs.maxThirstEnt.Value, 10, 10, int.MaxValue);
-
+            thirstEnabledEle = hud_categ.CreateBoolElement("Thirst Enabled", menuColor, NeedsStuff.thirstNeed.enabled);
+            thirstDecayRateEle = thirst_categ.CreateFloatElement("Thirst Decay Time", menuColor, NeedsStuff.thirstNeed.decayRate, 0.5f, 0.5f, float.MaxValue);
+            thirstStartValueEle = hunger_categ.CreateFloatElement("Thirst Start Value", menuColor, NeedsStuff.thirstNeed.startValue, 1f, 100f, float.MaxValue);
+            maxThirstEle = thirst_categ.CreateFloatElement("Max Thirst", menuColor, NeedsStuff.thirstNeed.maxValue, 10, 10, float.MaxValue);
 
             // Temperature Settings
             SubPanelElement tempur_categ = root_categ.CreateSubPanel("Temperature Settings", menuColor);
@@ -129,16 +128,16 @@ namespace iSurvivedBonelab
             Prefs.hudTypeEnt.Value = hudTypeEle.Value;
 
             // Hunger Prefs
-            Prefs.hungerEnabledEnt.Value = hungerEnabledEle.Value;
-            Prefs.hungerDecayTimeEnt.Value = hungerDecayTimeEle.Value;
-            Prefs.hungerDecayAmountEnt.Value = hungerDecayAmountEle.Value;
-            Prefs.maxHungerEnt.Value = maxHungerEle.Value;
+            NeedsStuff.hungerNeed.enabled = hungerEnabledEle.Value;
+            NeedsStuff.hungerNeed.maxValue = maxHungerEle.Value;
+            NeedsStuff.hungerNeed.decayRate = hungerDecayRateEle.Value;
+            NeedsStuff.hungerNeed.startValue = hungerStartValueEle.Value;
 
             // Thirst Prefs
-            Prefs.thirstEnabledEnt.Value = thirstEnabledEle.Value;
-            Prefs.thirstDecayTimeEnt.Value = thirstDecayTimeEle.Value;
-            Prefs.thirstDecayAmountEnt.Value = thirstDecayAmountEle.Value;
-            Prefs.maxThirstEnt.Value = maxThirstEle.Value;
+            NeedsStuff.thirstNeed.enabled = thirstEnabledEle.Value;
+            NeedsStuff.thirstNeed.maxValue = maxThirstEle.Value;
+            NeedsStuff.thirstNeed.decayRate = thirstDecayRateEle.Value;
+            NeedsStuff.thirstNeed.startValue = thirstStartValueEle.Value;
         }
 
         // Parent the hud to the set hudHand
@@ -173,42 +172,42 @@ namespace iSurvivedBonelab
             {
                 case 0:
                     // hunger bar
-                    if (Prefs.hungerEnabledEnt.Value)
+                    if (NeedsStuff.hungerNeed.enabled)
                     {
                         Image hungerGaugeBar = gaugeContainer.Find("FoodGauge").GetComponentInChildren<Image>();
                         gaugeContainer.Find("HungerGauge").GetComponentInChildren<Slider>().transform.parent.gameObject.SetActive(false);
                         hungerGaugeBar.transform.parent.gameObject.SetActive(true);
-                        hungerGaugeBar.fillAmount = Prefs.curHungerEnt.Value / Prefs.maxHungerEnt.Value;
+                        hungerGaugeBar.fillAmount = NeedsStuff.hungerNeed.GetPercentage();
                     }
 
                     // thirst bar
-                    if (Prefs.thirstEnabledEnt.Value)
+                    if (NeedsStuff.thirstNeed.enabled)
                     {
                         Image thirstGaugeBar = gaugeContainer.Find("ThirstGauge").GetComponentInChildren<Image>();
                         gaugeContainer.Find("ThirstGauge").GetComponentInChildren<Slider>().transform.parent.gameObject.SetActive(false);
                         thirstGaugeBar.transform.parent.gameObject.SetActive(true);
-                        thirstGaugeBar.fillAmount = Prefs.curThirstEnt.Value / Prefs.maxThirstEnt.Value;
+                        thirstGaugeBar.fillAmount = NeedsStuff.thirstNeed.GetPercentage();
                     }
                     break;
                 case 1:
                     // hunger bar 2
-                    if (Prefs.hungerEnabledEnt.Value)
+                    if (NeedsStuff.hungerNeed.enabled)
                     {
                         Slider hungerGaugeBar = gaugeContainer.Find("HungerGauge").GetComponentInChildren<Slider>();
                         gaugeContainer.Find("HungerGauge").GetComponentInChildren<Image>().transform.parent.gameObject.SetActive(false);
                         gaugeContainer.Find("HungerGauge").GetComponentInChildren<RawImage>().transform.parent.gameObject.SetActive(false);
                         hungerGaugeBar.transform.parent.gameObject.SetActive(true);
-                        hungerGaugeBar.value = Prefs.curHungerEnt.Value / Prefs.maxHungerEnt.Value;
+                        hungerGaugeBar.value = NeedsStuff.hungerNeed.GetPercentage();
                     }
 
                     // thirst bar 2
-                    if (Prefs.thirstEnabledEnt.Value)
+                    if (NeedsStuff.thirstNeed.enabled)
                     {
                         Slider thirstGaugeBar = menuAsset.transform.Find("Pos").Find("Canvas").Find("Grid").Find("Gauges").Find("ThirstGauge").GetComponentInChildren<Slider>();
                         gaugeContainer.Find("ThirstGauge").GetComponentInChildren<Image>().transform.parent.gameObject.SetActive(false);
                         gaugeContainer.Find("HungerGauge").GetComponentInChildren<RawImage>().transform.parent.gameObject.SetActive(false);
                         thirstGaugeBar.transform.parent.gameObject.SetActive(true);
-                        thirstGaugeBar.value = Prefs.curThirstEnt.Value / Prefs.maxThirstEnt.Value;
+                        thirstGaugeBar.value = NeedsStuff.thirstNeed.GetPercentage();
                     }
                     break;
             }
