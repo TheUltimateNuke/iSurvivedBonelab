@@ -6,31 +6,6 @@ using UnityEngine;
 
 namespace iSurvivedBonelab
 {
-    public static class TransformExtensions
-    {
-        public static Transform FindRecursive(this Transform self, string exactName) => self.FindRecursive(child => child.name == exactName);
-
-        public static Transform FindRecursive(this Transform self, Func<Transform, bool> selector)
-        {
-            foreach (Transform child in self)
-            {
-                if (selector(child))
-                {
-                    return child;
-                }
-
-                var finding = child.FindRecursive(selector);
-
-                if (finding != null)
-                {
-                    return finding;
-                }
-            }
-
-            return null;
-        }
-    }
-
     public static class BuildInfo
     {
         public const string Name = "BLSurvival";
@@ -44,17 +19,18 @@ namespace iSurvivedBonelab
 
         public override void OnInitializeMelon()
         {
-            // Create MelonPreferences values
-            if (MelonPreferences.GetCategory("BLSurvivalSettings") == null)
-                Prefs.CreatePrefs();
-            else
-                Prefs.LoadMelonPrefs();
-
-            // Create default needs
+            // Create information relating to needs
             NeedsStuff.CreateNeeds();
+
+            if (MelonPreferences.GetCategory("BLSurvivalSettings") == null)
+            {
+                // Create MelonPreferences values
+                Prefs.CreatePrefs();
+            }
 
             // Create settings menu elements for BoneLib
             MenuStuff.CreateElements();
+
 
             // Listen out for Bonelib.Hooking events
             Hooking.OnLevelInitialized += OnLevelInitialized;
@@ -79,11 +55,12 @@ namespace iSurvivedBonelab
 
             if (Prefs.enabledEnt.Value) 
             {
-                MenuStuff.UpdateHud();
+                if (Prefs.hudEnabledEnt.Value)
+                    MenuStuff.UpdateHud();
                 MenuStuff.UpdateSettings();
                 NeedsStuff.Update();
             }
-  
+
         }
 
         // Enable mod if the level has empty GameObject named BLSURVIVAL_AUTOENABLE or autoEnable toggled on
@@ -104,4 +81,25 @@ namespace iSurvivedBonelab
         }
 
     }
+
+    /*
+    public static class SomeUtils
+    {
+        public static Transform FindDebug(Transform parent, string name)
+        {
+            Melon<Main>.Logger.Msg("Starting FindDebug. parent = " + parent.name, ", name = " + name);
+            Transform transform = parent.Find(name);
+            if (!transform)
+            {
+                Melon<Main>.Logger.Error("FindDebug failed. Returning null.", new NullReferenceException());
+                return null;
+            }
+            else
+            {
+                Melon<Main>.Logger.Msg("FindDebug Succeeded. Returning transform.");
+                return transform;
+            }
+        }
+    }
+    */
 }

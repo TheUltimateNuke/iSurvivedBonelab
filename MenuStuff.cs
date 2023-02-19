@@ -9,6 +9,40 @@ using UnityEngine.UI;
 
 namespace iSurvivedBonelab
 {
+    public class NeedEle
+    {
+        public SubPanelElement subPanelEle;
+
+        public BoolElement enabledEle;
+        public FloatElement decayRateEle;
+        public FloatElement startValueEle;
+        public FloatElement maxValueEle;
+
+        private Need need;
+
+        public NeedEle(Need need) 
+        {
+            this.need = need;
+        }
+
+        public void Create(MenuCategory rootCateg, Color menuColor)
+        {
+            subPanelEle = rootCateg.CreateSubPanel(need.displayName + " Settings", menuColor);
+            enabledEle = rootCateg.CreateBoolElement(need.displayName + " Settings", menuColor, need.prefs.enabledEnt.Value);
+            decayRateEle = rootCateg.CreateFloatElement(need.displayName + " Decay Rate", menuColor, need.prefs.decayRateEnt.Value, 0.1f, 0f, float.MaxValue);
+            startValueEle = rootCateg.CreateFloatElement(need.displayName + " Start Value", menuColor, need.prefs.startValueEnt.Value, 0.1f, 0f, float.MaxValue);
+            maxValueEle = rootCateg.CreateFloatElement(need.displayName + " Max Value", menuColor, need.prefs.maxValueEnt.Value, 0.1f, 0f, float.MaxValue);
+        }
+
+        public void Update()
+        {
+            need.enabled = enabledEle.Value;
+            need.decayRate = decayRateEle.Value;
+            need.startValue = startValueEle.Value;
+            need.maxValue = maxValueEle.Value;
+        }
+    }
+
     internal static class MenuStuff
     {
         private static Color menuColor = new Color(173, 113, 0);
@@ -25,16 +59,6 @@ namespace iSurvivedBonelab
         private static FloatElement hudZEle;
         private static IntElement hudHandEle;
         private static IntElement hudTypeEle;
-
-        private static BoolElement hungerEnabledEle;
-        private static FloatElement hungerDecayRateEle;
-        private static FloatElement hungerStartValueEle;
-        private static FloatElement maxHungerEle;
-
-        private static BoolElement thirstEnabledEle;
-        private static FloatElement thirstDecayRateEle;
-        private static FloatElement thirstStartValueEle;
-        private static FloatElement maxThirstEle;
 
 
         internal static void CreateElements()
@@ -53,18 +77,10 @@ namespace iSurvivedBonelab
 
             // Create settings subpanels for each system
             // Hunger Settings
-            SubPanelElement hunger_categ = root_categ.CreateSubPanel("Hunger Settings", menuColor);
-            hungerEnabledEle = hud_categ.CreateBoolElement("Hunger Enabled", menuColor, NeedsStuff.hungerNeed.enabled);
-            hungerDecayRateEle = hunger_categ.CreateFloatElement("Hunger Decay Rate", menuColor, NeedsStuff.hungerNeed.decayRate, 0.5f, 0.5f, float.MaxValue);
-            hungerStartValueEle = hunger_categ.CreateFloatElement("Hunger Start Value", menuColor, NeedsStuff.hungerNeed.startValue, 0.5f, 0.5f, float.MaxValue);
-            maxHungerEle = hunger_categ.CreateFloatElement("Max Hunger", menuColor, NeedsStuff.hungerNeed.maxValue, 10, 10, float.MaxValue);
+            NeedsStuff.hungerNeed.ele.Create(root_categ, menuColor);
 
             // Thirst Settings
-            SubPanelElement thirst_categ = root_categ.CreateSubPanel("Thirst Settings", menuColor);
-            thirstEnabledEle = hud_categ.CreateBoolElement("Thirst Enabled", menuColor, NeedsStuff.thirstNeed.enabled);
-            thirstDecayRateEle = thirst_categ.CreateFloatElement("Thirst Decay Time", menuColor, NeedsStuff.thirstNeed.decayRate, 0.5f, 0.5f, float.MaxValue);
-            thirstStartValueEle = hunger_categ.CreateFloatElement("Thirst Start Value", menuColor, NeedsStuff.thirstNeed.startValue, 1f, 100f, float.MaxValue);
-            maxThirstEle = thirst_categ.CreateFloatElement("Max Thirst", menuColor, NeedsStuff.thirstNeed.maxValue, 10, 10, float.MaxValue);
+            NeedsStuff.thirstNeed.ele.Create(root_categ, menuColor);
 
             // Temperature Settings
             SubPanelElement tempur_categ = root_categ.CreateSubPanel("Temperature Settings", menuColor);
@@ -105,6 +121,7 @@ namespace iSurvivedBonelab
             }
         }
 
+        // B)
         private static void DestroyHud()
         {
             if (menuAsset != null) GameObject.Destroy(menuAsset);
@@ -128,16 +145,12 @@ namespace iSurvivedBonelab
             Prefs.hudTypeEnt.Value = hudTypeEle.Value;
 
             // Hunger Prefs
-            NeedsStuff.hungerNeed.enabled = hungerEnabledEle.Value;
-            NeedsStuff.hungerNeed.maxValue = maxHungerEle.Value;
-            NeedsStuff.hungerNeed.decayRate = hungerDecayRateEle.Value;
-            NeedsStuff.hungerNeed.startValue = hungerStartValueEle.Value;
+            NeedsStuff.hungerNeed.prefs.Update();
+            NeedsStuff.hungerNeed.ele.Update();
 
             // Thirst Prefs
-            NeedsStuff.thirstNeed.enabled = thirstEnabledEle.Value;
-            NeedsStuff.thirstNeed.maxValue = maxThirstEle.Value;
-            NeedsStuff.thirstNeed.decayRate = thirstDecayRateEle.Value;
-            NeedsStuff.thirstNeed.startValue = thirstStartValueEle.Value;
+            NeedsStuff.hungerNeed.prefs.Update();
+            NeedsStuff.thirstNeed.ele.Update();
         }
 
         // Parent the hud to the set hudHand
@@ -160,7 +173,7 @@ namespace iSurvivedBonelab
 
                 //FoodGauge();
                 //WaterGauge();
-                HudGauges(menuAsset.transform.FindRecursive("Gauges"));
+                HudGauges(GameObject.Find("Gauges").transform);
             }
             else if (menuAsset == null && Prefs.hudEnabledEnt.Value) CreateHud();
             else DestroyHud();
@@ -168,48 +181,61 @@ namespace iSurvivedBonelab
 
         private static void HudGauges(Transform gaugeContainer)
         {
-            switch (Prefs.hudTypeEnt.Value)
+            Melon<Main>.Logger.Msg("Updating hud gauges. gaugeContainer = " + gaugeContainer.name);
+            Transform foodGauge = GameObject.Find("FoodGauge").transform;
+            Transform thirstGauge = GameObject.Find("ThirstGauge").transform;
+
+            if (foodGauge != null && thirstGauge != null)
             {
-                case 0:
-                    // hunger bar
-                    if (NeedsStuff.hungerNeed.enabled)
-                    {
-                        Image hungerGaugeBar = gaugeContainer.Find("FoodGauge").GetComponentInChildren<Image>();
-                        gaugeContainer.Find("HungerGauge").GetComponentInChildren<Slider>().transform.parent.gameObject.SetActive(false);
-                        hungerGaugeBar.transform.parent.gameObject.SetActive(true);
-                        hungerGaugeBar.fillAmount = NeedsStuff.hungerNeed.GetPercentage();
-                    }
+                switch (Prefs.hudTypeEnt.Value)
+                {
+                    case 0:
+                        // hunger bar
+                        if (NeedsStuff.hungerNeed.enabled)
+                        {
+                            Image hungerGaugeBar = foodGauge.GetComponentInChildren<Image>();
+                            foodGauge.GetComponentInChildren<Slider>().transform.parent.gameObject.SetActive(false);
+                            hungerGaugeBar.transform.parent.gameObject.SetActive(true);
+                            hungerGaugeBar.fillAmount = NeedsStuff.hungerNeed.GetPercentage();
+                        }
+                        else foodGauge.gameObject.SetActive(false);
 
-                    // thirst bar
-                    if (NeedsStuff.thirstNeed.enabled)
-                    {
-                        Image thirstGaugeBar = gaugeContainer.Find("ThirstGauge").GetComponentInChildren<Image>();
-                        gaugeContainer.Find("ThirstGauge").GetComponentInChildren<Slider>().transform.parent.gameObject.SetActive(false);
-                        thirstGaugeBar.transform.parent.gameObject.SetActive(true);
-                        thirstGaugeBar.fillAmount = NeedsStuff.thirstNeed.GetPercentage();
-                    }
-                    break;
-                case 1:
-                    // hunger bar 2
-                    if (NeedsStuff.hungerNeed.enabled)
-                    {
-                        Slider hungerGaugeBar = gaugeContainer.Find("HungerGauge").GetComponentInChildren<Slider>();
-                        gaugeContainer.Find("HungerGauge").GetComponentInChildren<Image>().transform.parent.gameObject.SetActive(false);
-                        gaugeContainer.Find("HungerGauge").GetComponentInChildren<RawImage>().transform.parent.gameObject.SetActive(false);
-                        hungerGaugeBar.transform.parent.gameObject.SetActive(true);
-                        hungerGaugeBar.value = NeedsStuff.hungerNeed.GetPercentage();
-                    }
+                        // thirst bar
+                        if (NeedsStuff.thirstNeed.enabled)
+                        {
+                            Image thirstGaugeBar = thirstGauge.GetComponentInChildren<Image>();
+                            thirstGauge.GetComponentInChildren<Slider>().transform.parent.gameObject.SetActive(false);
+                            thirstGaugeBar.transform.parent.gameObject.SetActive(true);
+                            thirstGaugeBar.fillAmount = NeedsStuff.thirstNeed.GetPercentage();
+                        }
+                        else thirstGauge.gameObject.SetActive(false);
 
-                    // thirst bar 2
-                    if (NeedsStuff.thirstNeed.enabled)
-                    {
-                        Slider thirstGaugeBar = menuAsset.transform.Find("Pos").Find("Canvas").Find("Grid").Find("Gauges").Find("ThirstGauge").GetComponentInChildren<Slider>();
-                        gaugeContainer.Find("ThirstGauge").GetComponentInChildren<Image>().transform.parent.gameObject.SetActive(false);
-                        gaugeContainer.Find("HungerGauge").GetComponentInChildren<RawImage>().transform.parent.gameObject.SetActive(false);
-                        thirstGaugeBar.transform.parent.gameObject.SetActive(true);
-                        thirstGaugeBar.value = NeedsStuff.thirstNeed.GetPercentage();
-                    }
-                    break;
+                        break;
+                    case 1:
+                        // hunger bar 2
+                        if (NeedsStuff.hungerNeed.enabled)
+                        {
+                            Slider hungerGaugeBar = foodGauge.GetComponentInChildren<Slider>();
+                            foodGauge.GetComponentInChildren<Image>().transform.parent.gameObject.SetActive(false);
+                            foodGauge.GetComponentInChildren<RawImage>().transform.parent.gameObject.SetActive(false);
+                            hungerGaugeBar.transform.parent.gameObject.SetActive(true);
+                            hungerGaugeBar.value = NeedsStuff.hungerNeed.GetPercentage();
+                        }
+                        else foodGauge.gameObject.SetActive(false);
+
+                        // thirst bar 2
+                        if (NeedsStuff.thirstNeed.enabled)
+                        {
+                            Slider thirstGaugeBar = thirstGauge.GetComponentInChildren<Slider>();
+                            thirstGauge.GetComponentInChildren<Image>().transform.parent.gameObject.SetActive(false);
+                            thirstGauge.GetComponentInChildren<RawImage>().transform.parent.gameObject.SetActive(false);
+                            thirstGaugeBar.transform.parent.gameObject.SetActive(true);
+                            thirstGaugeBar.value = NeedsStuff.thirstNeed.GetPercentage();
+                        }
+                        else thirstGauge.gameObject.SetActive(false);
+
+                        break;
+                }
             }
         }
     }

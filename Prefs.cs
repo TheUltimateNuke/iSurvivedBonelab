@@ -3,24 +3,37 @@ using UnityEngine;
 
 namespace iSurvivedBonelab
 {
+    [System.Serializable]
     public class NeedPref {
-        public string prefName;
         public MelonPreferences_Entry<bool> enabledEnt;
         public MelonPreferences_Entry<float> curValueEnt;
         public MelonPreferences_Entry<float> maxValueEnt;
         public MelonPreferences_Entry<float> startValueEnt;
         public MelonPreferences_Entry<float> decayRateEnt;
 
-        public NeedPref(Need need, MelonPreferences_Category category)
+        private Need need;
+
+        public NeedPref(Need need) 
         {
-            if (MelonPreferences.GetCategory("BLSurvivalSettings") == null)
-            {
-                enabledEnt = category.CreateEntry(prefName + nameof(enabledEnt), need.enabled, need.displayName);
-                curValueEnt = category.CreateEntry(prefName + nameof(curValueEnt), need.curValue, need.displayName);
-                maxValueEnt = category.CreateEntry(prefName + nameof(maxValueEnt), need.maxValue, need.displayName);
-                startValueEnt = category.CreateEntry(prefName + nameof(startValueEnt), need.startValue, need.displayName);
-                decayRateEnt = category.CreateEntry(prefName + nameof(decayRateEnt), need.decayRate, need.displayName);
-            }
+            this.need = need;
+        }
+
+        public void Create(MelonPreferences_Category category)
+        {
+            enabledEnt = category.CreateEntry(need.displayName.ToLowerInvariant() + nameof(enabledEnt), need.enabled, need.displayName);
+            curValueEnt = category.CreateEntry(need.displayName.ToLower() + nameof(curValueEnt), need.curValue, need.displayName);
+            maxValueEnt = category.CreateEntry(need.displayName.ToLower() + nameof(maxValueEnt), need.maxValue, need.displayName);
+            startValueEnt = category.CreateEntry(need.displayName.ToLower() + nameof(startValueEnt), need.startValue, need.displayName);
+            decayRateEnt = category.CreateEntry(need.displayName.ToLower() + nameof(decayRateEnt), need.decayRate, need.displayName);
+        }
+
+        public void Update()
+        {
+            enabledEnt.Value = need.enabled;
+            curValueEnt.Value = need.curValue;
+            maxValueEnt.Value = need.maxValue;
+            startValueEnt.Value = need.startValue;
+            decayRateEnt.Value = need.decayRate;
         }
     }
 
@@ -58,6 +71,12 @@ namespace iSurvivedBonelab
             hudOffsetEnt = root_categ.CreateEntry("_hudOffset", new Vector3(hudOffsetXEnt.Value, hudOffsetYEnt.Value, hudOffsetZEnt.Value), is_hidden: true);
             hudHandEnt = root_categ.CreateEntry("HudHand", 0);
             hudTypeEnt = root_categ.CreateEntry("HudType", 0);
+
+            // Hunger prefs
+            NeedsStuff.hungerNeed.prefs.Create(root_categ);
+
+            // Thirst prefs
+            NeedsStuff.thirstNeed.prefs.Create(root_categ);
         }
 
         internal static void SaveMelonPrefs()

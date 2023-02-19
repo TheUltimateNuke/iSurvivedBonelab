@@ -1,51 +1,15 @@
-﻿using System;
+﻿using SLZ.Props;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace iSurvivedBonelab
 {
-    public static class NeedsStuff
-    {
-        public static Need hungerNeed;
-        public static Need thirstNeed;
-
-        public static float noHungerHealthDecay;
-
-        public static void CreateNeeds()
-        {
-            hungerNeed = new Need
-            {
-                displayName = "Hunger",
-                enabled = true,
-                maxValue = 100,
-                startValue = hungerNeed.maxValue,
-                decayRate = 1f
-            };
-
-            thirstNeed = new Need
-            {
-                displayName = "Thirst",
-                enabled = true,
-                maxValue = 100,
-                startValue = thirstNeed.maxValue,
-                decayRate = 2f
-            };
-        }
-
-        internal static void Update()
-        {
-            hungerNeed.BindPrefs();
-            thirstNeed.BindPrefs();
-
-            hungerNeed.Subtract(hungerNeed.decayRate * Time.deltaTime);
-            thirstNeed.Subtract(thirstNeed.decayRate * Time.deltaTime);
-        }
-    }
-
     [System.Serializable]
     public class Need
     {
         public NeedPref prefs;
+        public NeedEle ele;
 
         public string displayName;
         public bool enabled;
@@ -71,15 +35,41 @@ namespace iSurvivedBonelab
 
         public Need()
         {
-            prefs = new NeedPref(this, MelonLoader.MelonPreferences.GetCategory("BLSurvivalSettings"));
+            prefs = new NeedPref(this);
+            ele = new NeedEle(this);
+        }
+    }
+
+    public static class NeedsStuff
+    {
+        public static Need hungerNeed;
+        public static Need thirstNeed;
+
+        internal static void CreateNeeds()
+        {
+            hungerNeed = new Need
+            {
+                displayName = "Hunger",
+                enabled = true,
+                maxValue = 100,
+                startValue = 100,
+                decayRate = 1f
+            };
+
+            thirstNeed = new Need
+            {
+                displayName = "Thirst",
+                enabled = true,
+                maxValue = 100,
+                startValue = 100,
+                decayRate = 2f
+            };
         }
 
-        public void BindPrefs()
-        {
-            prefs.maxValueEnt.Value = maxValue;
-            prefs.startValueEnt.Value = startValue;
-            prefs.curValueEnt.Value = curValue;
-            prefs.decayRateEnt.Value = decayRate;
+        internal static void Update()
+        {   
+            hungerNeed.Subtract(hungerNeed.decayRate * Time.deltaTime);
+            thirstNeed.Subtract(thirstNeed.decayRate * Time.deltaTime);
         }
     }
 }
