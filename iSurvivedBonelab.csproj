@@ -99,8 +99,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MenuStuff.cs" />
+    <Compile Include="MonoBehaviours\PlayerNeeds.cs" />
+    <Compile Include="Need.cs" />
+    <Compile Include="MonoBehaviours\TrackHand.cs" />
     <Compile Include="MonoBehaviours\Consumable.cs" />
-    <Compile Include="NeedsStuff.cs" />
     <Compile Include="Prefs.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

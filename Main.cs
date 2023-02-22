@@ -1,4 +1,5 @@
 ﻿using BoneLib;
+using iSurvivedBonelab.MonoBehaviours;
 using MelonLoader;
 using System;
 using System.Reflection;
@@ -15,50 +16,42 @@ namespace iSurvivedBonelab
 
     public class Main : MelonMod
     {
-        public static Assembly assembly = Assembly.GetExecutingAssembly();
-
         public override void OnInitializeMelon()
         {
-            // Create information relating to needs
-            NeedsStuff.CreateNeeds();
+            //NeedsManager.Start();
 
-            if (MelonPreferences.GetCategory("BLSurvivalSettings") == null)
+            if (MelonPreferences.GetCategory("BLSurvivalSettings") == null && Prefs.autoEnableEnt.Value)
             {
                 // Create MelonPreferences values
                 Prefs.CreatePrefs();
             }
 
-            // Create settings menu elements for BoneLib
-            MenuStuff.CreateElements();
+            if (Prefs.autoEnableEnt.Value)
+            {
+                // Create settings menu elements for BoneLib
+                MenuStuff.CreateElements();
 
+                // Listen out for Bonelib.Hooking events
+                Hooking.OnLevelUnloaded += OnLevelUnloaded;
+                Hooking.OnLevelInitialized += OnLevelInitialized;
+            }
 
-            // Listen out for Bonelib.Hooking events
-            Hooking.OnLevelInitialized += OnLevelInitialized;
-            Hooking.OnLevelUnloaded += OnLevelUnloaded;
         }
 
-        private void OnLevelInitialized(LevelInfo info)
+        private void OnLevelInitialized(LevelInfo lvl)
         {
-            if (Prefs.enabledEnt.Value)
-            {
-                // Create HUD if not in main menu (doesn't work for some reason?)
-                if (Prefs.hudEnabledEnt.Value && !(info.title.Equals("00 - Main Menu") || info.title.Equals("15 - Void G114")))
-                {
-                    MenuStuff.CreateHud();
-                }
-            }
+            if (Prefs.autoEnableEnt.Value)
+                MenuStuff.SpawnHud();
         }
 
         public override void OnUpdate()
         {
             Prefs.enabledEnt.Value = CheckEnabled();
 
-            if (Prefs.enabledEnt.Value) 
+            if (Prefs.autoEnableEnt.Value) 
             {
-                if (Prefs.hudEnabledEnt.Value)
-                    MenuStuff.UpdateHud();
+                //NeedsManager.Update();
                 MenuStuff.UpdateSettings();
-                NeedsStuff.Update();
             }
 
         }

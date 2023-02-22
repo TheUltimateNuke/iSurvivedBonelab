@@ -1,4 +1,5 @@
-﻿using MelonLoader;
+﻿using iSurvivedBonelab.MonoBehaviours;
+using MelonLoader;
 using UnityEngine;
 
 namespace iSurvivedBonelab
@@ -72,11 +73,8 @@ namespace iSurvivedBonelab
             hudHandEnt = root_categ.CreateEntry("HudHand", 0);
             hudTypeEnt = root_categ.CreateEntry("HudType", 0);
 
-            // Hunger prefs
-            NeedsStuff.hungerNeed.prefs.Create(root_categ);
-
-            // Thirst prefs
-            NeedsStuff.thirstNeed.prefs.Create(root_categ);
+            // Need prefs
+            //NeedsManager.CreateAllPref();
         }
 
         internal static void SaveMelonPrefs()

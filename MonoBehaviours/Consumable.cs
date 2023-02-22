@@ -10,6 +10,8 @@ namespace iSurvivedBonelab.MonoBehaviours
     {
         public Need type;
 
+        public MeshRenderer[] biteRenderers;
+
         public AudioClip[] biteSounds;
         public AudioClip[] consumeSounds;
         
@@ -24,11 +26,13 @@ namespace iSurvivedBonelab.MonoBehaviours
         public UltEvent<Collider, Consumable> onConsumed;
         public UltEvent<Collider, Consumable> onBite;
 
-        public string MouthTag = "Mouth";
+        public string mouthTag = "Mouth";
 
         private int _curBites;
 
-        private void Awake()
+        private MeshRenderer _curBiteRenderer;
+
+        private void Start()
         {
             if (!type.enabled)
             {
@@ -39,9 +43,10 @@ namespace iSurvivedBonelab.MonoBehaviours
 
         private void OnTriggerEnter(Collider collider)
         {
-            if (collider.CompareTag(MouthTag))
+            if (collider.CompareTag(mouthTag))
             {
                 type.Add(PointsGivenPerBite);
+
                 onBite.Invoke(collider, this);
                 if (_curBites <= 1) {
                     onConsumed.Invoke(collider, this);
