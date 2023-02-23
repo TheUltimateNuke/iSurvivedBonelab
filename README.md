@@ -2,10 +2,17 @@
 ## Description
 BLSurvival or iSurvivedBonelab is a WIP modification for BoneLab utilizing MelonLoader (PC only). The goal of this mod is to allow modders to incorporate traditional survival elements into their levels and spawnables, while also giving the user the choice to configure everything and opt in/out at any point.  
 
+## Installation
+1) Install MelonLoader for Bonelab
+2) Place iSurvivedBonelab.dll in your MelonLoader mods folder.
+3) Place BLSurvivalAssets (the folder) in your LocalLow/StressLevelZero/BONELAB mods folder
+
 ## Requirements
 - BoneLab
 - [MelonLoader](https://melonwiki.xyz/)
 - [BoneLib](https://bonelab.thunderstore.io/package/gnonme/BoneLib/)
+
+## [BLSurvival SDK Wiki](https://github.com/TheUltimateNuke/iSurvivedBonelab/wiki)
 
 ## Features
 ### Complete
@@ -13,8 +20,7 @@ BLSurvival or iSurvivedBonelab is a WIP modification for BoneLab utilizing Melon
 - HUD, follows hand of choice
 
 ### To-Do
-- Hunger system with support for modders to add custom food spawnables.
-- Thirst system with support for modders to add custom drink spawnables.
+- Fully extendable needs system with support for custom consumables.
 - Disease system with support for modders to add custom diseases, causes, and effects.
 - Temperature system with support for level creators to add trigger-based temperature volumes.
 - Crafting system with support for custom recipes, workbenches, and resources.
