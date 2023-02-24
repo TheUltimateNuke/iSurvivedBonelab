@@ -8,9 +8,10 @@ namespace iSurvivedBonelab.MonoBehaviours
 {
     public class Consumable : MonoBehaviour
     {
-        public Need type;
+        public string needDisplayName;
 
-        public MeshRenderer[] biteRenderers;
+        // TODO: Soon maybe
+        //public MeshRenderer[] biteRenderers;
 
         public AudioClip[] biteSounds;
         public AudioClip[] consumeSounds;
@@ -30,33 +31,40 @@ namespace iSurvivedBonelab.MonoBehaviours
 
         private int _curBites;
 
-        private MeshRenderer _curBiteRenderer;
+        // TODO: Soon maybe
+        //private MeshRenderer _curBiteRenderer;
+
+        private PlayerNeeds _playerNeeds;
+
+        private Need _curType;
 
         private void Start()
         {
-            if (!type.enabled)
+            _playerNeeds = Main.hud.GetComponent<PlayerNeeds>();
+            _curType = _playerNeeds.GetNeed(needDisplayName);
+            if (_curType == null) {
+                Melon<Main>.Logger.Error(
+                    "Could not find a managed Need that corresponds to the provided string on this consumable. gameObject.name = " 
+                    + gameObject.name 
+                    + " needDisplayName = " 
+                    + needDisplayName
+                    );
+                Destroy(gameObject);
+            }
+
+            if (!_curType.enabled)
             {
                 gameObject.SetActive(false);
             }
+
             _curBites = maxBites;
         }
 
-        private void OnTriggerEnter(Collider collider)
+        private void OnTriggerEnter(Collider other)
         {
-            if (collider.CompareTag(mouthTag))
+            if (other.CompareTag(mouthTag))
             {
-                type.Add(PointsGivenPerBite);
-
-                onBite.Invoke(collider, this);
-                if (_curBites <= 1) {
-                    onConsumed.Invoke(collider, this);
-                    if (blipScript) blipScript.Despawn();
-                    PlayRandomSound(consumeSounds);
-                }
-                else {
-                    _curBites--;
-                    PlayRandomSound(biteSounds);
-                }
+                Consume(other);
             }
         }
 
@@ -69,5 +77,22 @@ namespace iSurvivedBonelab.MonoBehaviours
             }
         }
 
+        private void Consume(Collider other)
+        {
+            Main.hud.GetComponent<PlayerNeeds>().GetNeed(needDisplayName).Add(PointsGivenPerBite);
+
+            onBite.Invoke(other, this);
+            if (_curBites <= 1)
+            {
+                onConsumed.Invoke(other, this);
+                if (blipScript) blipScript.Despawn(); else Destroy(gameObject);
+                PlayRandomSound(consumeSounds);
+            }
+            else
+            {
+                _curBites--;
+                PlayRandomSound(biteSounds);
+            }
+        }
     }
 }

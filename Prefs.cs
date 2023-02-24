@@ -1,5 +1,4 @@
-﻿using iSurvivedBonelab.MonoBehaviours;
-using MelonLoader;
+﻿using MelonLoader;
 using UnityEngine;
 
 namespace iSurvivedBonelab
@@ -7,10 +6,15 @@ namespace iSurvivedBonelab
     [System.Serializable]
     public class NeedPref {
         public MelonPreferences_Entry<bool> enabledEnt;
+        public MelonPreferences_Entry<bool> decayHealthEnt;
+        public MelonPreferences_Entry<bool> passiveDecayEnt;
+
         public MelonPreferences_Entry<float> curValueEnt;
         public MelonPreferences_Entry<float> maxValueEnt;
         public MelonPreferences_Entry<float> startValueEnt;
         public MelonPreferences_Entry<float> decayRateEnt;
+        public MelonPreferences_Entry<float> regenRateEnt;
+        public MelonPreferences_Entry<float> healthDecayRateEnt;
 
         private Need need;
 
@@ -21,20 +25,29 @@ namespace iSurvivedBonelab
 
         public void Create(MelonPreferences_Category category)
         {
-            enabledEnt = category.CreateEntry(need.displayName.ToLowerInvariant() + nameof(enabledEnt), need.enabled, need.displayName);
-            curValueEnt = category.CreateEntry(need.displayName.ToLower() + nameof(curValueEnt), need.curValue, need.displayName);
-            maxValueEnt = category.CreateEntry(need.displayName.ToLower() + nameof(maxValueEnt), need.maxValue, need.displayName);
-            startValueEnt = category.CreateEntry(need.displayName.ToLower() + nameof(startValueEnt), need.startValue, need.displayName);
-            decayRateEnt = category.CreateEntry(need.displayName.ToLower() + nameof(decayRateEnt), need.decayRate, need.displayName);
+            enabledEnt = category.CreateEntry(need.DisplayName.ToLowerInvariant() + nameof(enabledEnt), need.enabled);
+            decayHealthEnt = category.CreateEntry(need.DisplayName.ToLowerInvariant() + nameof(decayHealthEnt), need.decayHealthWhenEmpty);
+            passiveDecayEnt = category.CreateEntry(need.DisplayName.ToLowerInvariant() + nameof(passiveDecayEnt), need.passiveDecay);
+
+            curValueEnt = category.CreateEntry(need.DisplayName.ToLower() + nameof(curValueEnt), need.curValue);
+            maxValueEnt = category.CreateEntry(need.DisplayName.ToLower() + nameof(maxValueEnt), need.maxValue);
+            startValueEnt = category.CreateEntry(need.DisplayName.ToLower() + nameof(startValueEnt), need.startValue);
+            decayRateEnt = category.CreateEntry(need.DisplayName.ToLower() + nameof(decayRateEnt), need.decayRate);
+            regenRateEnt = category.CreateEntry(need.DisplayName.ToLower() + nameof(regenRateEnt), need.regenRate);
+            healthDecayRateEnt = category.CreateEntry(need.DisplayName.ToLower() + nameof(healthDecayRateEnt), need.healthDecayRate);
         }
 
         public void Update()
         {
             enabledEnt.Value = need.enabled;
+            decayHealthEnt.Value = need.decayHealthWhenEmpty;
+            passiveDecayEnt.Value = need.passiveDecay;
+
             curValueEnt.Value = need.curValue;
             maxValueEnt.Value = need.maxValue;
             startValueEnt.Value = need.startValue;
             decayRateEnt.Value = need.decayRate;
+            healthDecayRateEnt.Value = need.healthDecayRate;
         }
     }
 
@@ -74,7 +87,6 @@ namespace iSurvivedBonelab
             hudTypeEnt = root_categ.CreateEntry("HudType", 0);
 
             // Need prefs
-            //NeedsManager.CreateAllPref();
         }
 
         internal static void SaveMelonPrefs()

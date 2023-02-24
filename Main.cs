@@ -1,8 +1,5 @@
 ﻿using BoneLib;
-using iSurvivedBonelab.MonoBehaviours;
 using MelonLoader;
-using System;
-using System.Reflection;
 using UnityEngine;
 
 namespace iSurvivedBonelab
@@ -16,44 +13,40 @@ namespace iSurvivedBonelab
 
     public class Main : MelonMod
     {
+        public static GameObject hud;
+        public static GameObject mouth;
+
         public override void OnInitializeMelon()
         {
-            //NeedsManager.Start();
-
-            if (MelonPreferences.GetCategory("BLSurvivalSettings") == null && Prefs.autoEnableEnt.Value)
+            if (MelonPreferences.GetCategory("BLSurvivalSettings") == null)
             {
                 // Create MelonPreferences values
                 Prefs.CreatePrefs();
             }
 
+            // Create settings menu elements for BoneLib
+            MenuStuff.CreateElements();
+
             if (Prefs.autoEnableEnt.Value)
             {
-                // Create settings menu elements for BoneLib
-                MenuStuff.CreateElements();
+                // prepare the hud bundle
+                MenuStuff.HudBundleStuff.Init();
+
+                // spawn the hud bundle
+                hud = Object.Instantiate(MenuStuff.HudBundleStuff.FindBundleObject("BLSurvivalHUD"));
+                Object.DontDestroyOnLoad(hud);
+
+                mouth = CreateMouth();
 
                 // Listen out for Bonelib.Hooking events
                 Hooking.OnLevelUnloaded += OnLevelUnloaded;
-                Hooking.OnLevelInitialized += OnLevelInitialized;
+                //Hooking.OnLevelInitialized += OnLevelInitialized;
             }
-
-        }
-
-        private void OnLevelInitialized(LevelInfo lvl)
-        {
-            if (Prefs.autoEnableEnt.Value)
-                MenuStuff.SpawnHud();
         }
 
         public override void OnUpdate()
         {
-            Prefs.enabledEnt.Value = CheckEnabled();
-
-            if (Prefs.autoEnableEnt.Value) 
-            {
-                //NeedsManager.Update();
-                MenuStuff.UpdateSettings();
-            }
-
+            MenuStuff.UpdateSettings();
         }
 
         // Enable mod if the level has empty GameObject named BLSURVIVAL_AUTOENABLE or autoEnable toggled on
@@ -63,6 +56,7 @@ namespace iSurvivedBonelab
             else { return false; }
         }
 
+        // Save Melon Preferences on unload of a level or the whole mod
         private void OnLevelUnloaded()
         {
             Prefs.SaveMelonPrefs();
@@ -73,26 +67,19 @@ namespace iSurvivedBonelab
             Prefs.SaveMelonPrefs();
         }
 
-    }
-
-    /*
-    public static class SomeUtils
-    {
-        public static Transform FindDebug(Transform parent, string name)
+        public GameObject CreateMouth()
         {
-            Melon<Main>.Logger.Msg("Starting FindDebug. parent = " + parent.name, ", name = " + name);
-            Transform transform = parent.Find(name);
-            if (!transform)
-            {
-                Melon<Main>.Logger.Error("FindDebug failed. Returning null.", new NullReferenceException());
-                return null;
-            }
-            else
-            {
-                Melon<Main>.Logger.Msg("FindDebug Succeeded. Returning transform.");
-                return transform;
-            }
+            GameObject mouth = new GameObject("Mouth");
+
+            mouth.transform.parent = Player.playerHead;
+            mouth.transform.localPosition = Vector3.zero + Player.playerHead.forward; // TODO: add config for this
+            mouth.tag = "Mouth";
+            BoxCollider mouthTrigger = mouth.AddComponent<BoxCollider>();
+            mouthTrigger.isTrigger = true;
+            mouthTrigger.size = new Vector3(0.2f, 0.2f, 0.2f);
+
+            return mouth;
         }
+
     }
-    */
 }

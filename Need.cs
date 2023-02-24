@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using iSurvivedBonelab.MonoBehaviours;
+using SLZ.UI;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace iSurvivedBonelab
@@ -12,8 +14,8 @@ namespace iSurvivedBonelab
         public Image imageBar;
         public Slider simpleBar;
 
-        public string displayName;
-        
+        public string DisplayName { get; }
+
         public bool enabled;
         public bool decayHealthWhenEmpty;
         public bool passiveDecay;
@@ -45,7 +47,9 @@ namespace iSurvivedBonelab
         public void CreatePrefsAndEle()
         {
             prefs = new NeedPref(this);
+            prefs.Create(Prefs.root_categ);
             ele = new NeedEle(this);
+            ele.Create(MenuStuff.root_categ, MenuStuff.menuColor);
         }
     }
 }

@@ -1,22 +1,11 @@
-﻿using BoneLib;
-using BoneLib.BoneMenu;
+﻿using BoneLib.BoneMenu;
 using BoneLib.BoneMenu.Elements;
-using BoneLib.Nullables;
-using Il2CppSystem.Collections.Generic;
-using iSurvivedBonelab.MonoBehaviours;
 using MelonLoader;
-using SLZ.Bonelab;
-using SLZ.Interaction;
-using SLZ.Marrow.Data;
-using SLZ.Marrow.Pool;
-using SLZ.Marrow.Warehouse;
-using SLZ.Props;
-using SLZ.UI;
-using System;
 using System.IO;
+using System.Reflection;
 using UnhollowerBaseLib;
 using UnityEngine;
-using UnityEngine.UI;
+using System.Collections.Generic;
 
 namespace iSurvivedBonelab
 {
@@ -25,38 +14,54 @@ namespace iSurvivedBonelab
         public SubPanelElement subPanelEle;
 
         public BoolElement enabledEle;
+        public BoolElement passiveDecayEle;
+        public BoolElement decayHealthEle;
+
         public FloatElement decayRateEle;
         public FloatElement startValueEle;
         public FloatElement maxValueEle;
+        public FloatElement regenRateEle;
+        public FloatElement healthDecayRateEle;
 
-        private Need need;
+        private Need Need { get; }
 
         public NeedEle(Need need)
         {
-            this.need = need;
+            Need = need;
         }
 
         public void Create(MenuCategory rootCateg, Color menuColor)
         {
-            subPanelEle = rootCateg.CreateSubPanel(need.displayName + " Settings", menuColor);
-            enabledEle = rootCateg.CreateBoolElement(need.displayName + " Settings", menuColor, need.prefs.enabledEnt.Value);
-            decayRateEle = rootCateg.CreateFloatElement(need.displayName + " Decay Rate", menuColor, need.prefs.decayRateEnt.Value, 0.1f, 0f, float.MaxValue);
-            startValueEle = rootCateg.CreateFloatElement(need.displayName + " Start Value", menuColor, need.prefs.startValueEnt.Value, 0.1f, 0f, float.MaxValue);
-            maxValueEle = rootCateg.CreateFloatElement(need.displayName + " Max Value", menuColor, need.prefs.maxValueEnt.Value, 0.1f, 0f, float.MaxValue);
+            subPanelEle = rootCateg.CreateSubPanel(Need.DisplayName + " Settings", menuColor);
+
+            enabledEle = subPanelEle.CreateBoolElement(Need.DisplayName + " Enabled", menuColor, Need.prefs.enabledEnt.Value);
+            passiveDecayEle = subPanelEle.CreateBoolElement(Need.DisplayName + " Passive Decay", menuColor, Need.prefs.passiveDecayEnt.Value);
+            decayHealthEle = subPanelEle.CreateBoolElement(Need.DisplayName + " Health Decay", menuColor, Need.prefs.decayHealthEnt.Value);
+
+            decayRateEle = subPanelEle.CreateFloatElement(Need.DisplayName + " Decay Rate", menuColor, Need.prefs.decayRateEnt.Value, 0.1f, 0f, float.MaxValue);
+            startValueEle = subPanelEle.CreateFloatElement(Need.DisplayName + " Start Value", menuColor, Need.prefs.startValueEnt.Value, 0.1f, 0f, float.MaxValue);
+            maxValueEle = subPanelEle.CreateFloatElement(Need.DisplayName + " Max Value", menuColor, Need.prefs.maxValueEnt.Value, 0.1f, 0f, float.MaxValue);
+            regenRateEle = subPanelEle.CreateFloatElement(Need.DisplayName + " Regen Rate", menuColor, Need.prefs.regenRateEnt.Value, 0.1f, 0f, float.MaxValue);
+            healthDecayRateEle = subPanelEle.CreateFloatElement(Need.DisplayName + " Health Decay Rate", menuColor, Need.prefs.healthDecayRateEnt.Value, 0.1f, 0f, float.MaxValue);
         }
 
         public void Update()
         {
-            need.enabled = enabledEle.Value;
-            need.decayRate = decayRateEle.Value;
-            need.startValue = startValueEle.Value;
-            need.maxValue = maxValueEle.Value;
+            Need.enabled = enabledEle.Value;
+            Need.passiveDecay = passiveDecayEle.Value;
+            Need.decayHealthWhenEmpty = decayHealthEle.Value;
+
+            Need.decayRate = decayRateEle.Value;
+            Need.startValue = startValueEle.Value;
+            Need.maxValue = maxValueEle.Value;
+            Need.regenRate = regenRateEle.Value;
+            Need.healthDecayRate = healthDecayRateEle.Value;
         }
     }
 
     internal static class MenuStuff
     {
-        private static Color _menuColor = new Color(173, 113, 0);
+        public static Color menuColor = new Color(173, 113, 0);
 
         public static MenuCategory root_categ;
 
@@ -73,31 +78,30 @@ namespace iSurvivedBonelab
         internal static void CreateElements()
         {
             // Create root categ
-            root_categ = MenuManager.CreateCategory("BLSurvival", _menuColor);
+            root_categ = MenuManager.CreateCategory("BLSurvival", menuColor);
 
             // HUD settings
-            SubPanelElement hud_categ = root_categ.CreateSubPanel("HUD Settings", _menuColor);
-            _hudEnabledEle = hud_categ.CreateBoolElement("Hud Enabled", _menuColor, Prefs.hudEnabledEnt.Value);
-            _hudXEle = hud_categ.CreateFloatElement("Hud Offset X", _menuColor, Prefs.hudOffsetXEnt.Value, 0.01f, -10f, 10f);
-            _hudYEle = hud_categ.CreateFloatElement("Hud Offset Y", _menuColor, Prefs.hudOffsetYEnt.Value, 0.01f, -10f, 10f);
-            _hudZEle = hud_categ.CreateFloatElement("Hud Offset Z", _menuColor, Prefs.hudOffsetZEnt.Value, 0.01f, -10f, 10f);
-            _hudTypeEle = hud_categ.CreateIntElement("Hud Type", _menuColor, Prefs.hudTypeEnt.Value, 1, 0, 1);
-            _hudHandEle = hud_categ.CreateIntElement("Hud Hand", _menuColor, Prefs.hudHandEnt.Value, 1, 0, 1);
+            SubPanelElement hud_categ = root_categ.CreateSubPanel("HUD Settings", menuColor);
+            _hudEnabledEle = hud_categ.CreateBoolElement("Hud Enabled", menuColor, Prefs.hudEnabledEnt.Value);
+            _hudXEle = hud_categ.CreateFloatElement("Hud Offset X", menuColor, Prefs.hudOffsetXEnt.Value, 0.01f, -10f, 10f);
+            _hudYEle = hud_categ.CreateFloatElement("Hud Offset Y", menuColor, Prefs.hudOffsetYEnt.Value, 0.01f, -10f, 10f);
+            _hudZEle = hud_categ.CreateFloatElement("Hud Offset Z", menuColor, Prefs.hudOffsetZEnt.Value, 0.01f, -10f, 10f);
+            _hudTypeEle = hud_categ.CreateIntElement("Hud Type", menuColor, Prefs.hudTypeEnt.Value, 1, 0, 1);
+            _hudHandEle = hud_categ.CreateIntElement("Hud Hand", menuColor, Prefs.hudHandEnt.Value, 1, 0, 1);
 
             // Create settings subpanels for each system
             // Need Settings
-            //NeedsManager.CreateAllEle();
 
             // Temperature Settings
-            SubPanelElement tempur_categ = root_categ.CreateSubPanel("Temperature Settings", _menuColor);
-            tempur_categ.CreateFunctionElement("TBD", _menuColor, () => Melon<Main>.Logger.Msg("Player pressed useless FunctionElement!"));
+            SubPanelElement tempur_categ = root_categ.CreateSubPanel("Temperature Settings", menuColor);
+            tempur_categ.CreateFunctionElement("TBD", menuColor, () => Melon<Main>.Logger.Msg("Player pressed useless FunctionElement!"));
 
             // Disease Settings
-            SubPanelElement disease_categ = root_categ.CreateSubPanel("Disease Settings", _menuColor);
-            disease_categ.CreateFunctionElement("TBD", _menuColor, () => Melon<Main>.Logger.Msg("Player pressed useless FunctionElement!"));
+            SubPanelElement disease_categ = root_categ.CreateSubPanel("Disease Settings", menuColor);
+            disease_categ.CreateFunctionElement("TBD", menuColor, () => Melon<Main>.Logger.Msg("Player pressed useless FunctionElement!"));
 
             // Create root settings
-            _autoEnableEle = root_categ.CreateBoolElement("Enable Mod", _menuColor, true);
+            _autoEnableEle = root_categ.CreateBoolElement("Enable Mod", menuColor, true);
         }
 
         internal static void UpdateSettings()
@@ -115,27 +119,55 @@ namespace iSurvivedBonelab
             Prefs.hudOffsetEnt.Value = new Vector3(Prefs.hudOffsetXEnt.Value, Prefs.hudOffsetYEnt.Value, Prefs.hudOffsetZEnt.Value);
             Prefs.hudHandEnt.Value = _hudHandEle.Value;
             Prefs.hudTypeEnt.Value = _hudTypeEle.Value;
-
-            // Need Prefs
-            //NeedsManager.UpdateAllEle();
         }
 
-        public static GameObject SpawnHud()
+        public static class HudBundleStuff
         {
-            Transform head = Player.playerHead.transform;
+            private static AssetBundle _bundle;
+            private static System.Collections.Generic.List<GameObject> _bundleObjects;
 
-            string barcode = "TheUltimateNuke.BLSurvivalAssets.Spawnable.BLSurvivalHUD";
-            SpawnableCrateReference reference = new SpawnableCrateReference(barcode);
+            public static AssetBundle bundle => _bundle;
+            public static System.Collections.Generic.IReadOnlyList<GameObject> BundleObjects { get => _bundleObjects.AsReadOnly(); }
 
-            Spawnable spawnable = new Spawnable()
+            public static void Init()
             {
-                crateRef = reference
-            };
+                _bundleObjects = new List<GameObject>();
+                _bundle = GetHudBundle();
+                _bundle.hideFlags = HideFlags.DontUnloadUnusedAsset;
 
-            AssetSpawner.Register(spawnable);
-            AssetSpawner.Spawn(spawnable, head.position + head.forward, default, new BoxedNullable<Vector3>(Vector3.one), false, new BoxedNullable<int>(null), null, null);
+                Il2CppReferenceArray<UnityEngine.Object> assets = bundle.LoadAllAssets();
 
-            return GameObject.Find(spawnable.crateRef.Barcode);
+                foreach (var asset in assets)
+                {
+                    if (asset.TryCast<GameObject>() != null)
+                    {
+                        GameObject assetObject = asset.Cast<GameObject>();
+                        assetObject.hideFlags = HideFlags.DontUnloadUnusedAsset;
+                        _bundleObjects.Add(assetObject);
+                    }
+                }
+            }
+
+            public static GameObject FindBundleObject(string name)
+            {
+                return _bundleObjects.Find(x => x.name == name);
+            }
+
+            public static AssetBundle GetHudBundle()
+            {
+                Assembly assembly = Assembly.GetExecutingAssembly();
+
+                string path = "iSurvivedBonelab.Assets.blsurvivalhud";
+
+                using (Stream resourceStream = assembly.GetManifestResourceStream(path))
+                {
+                    using (MemoryStream memoryStream = new MemoryStream())
+                    {
+                        resourceStream.CopyTo(memoryStream);
+                        return AssetBundle.LoadFromMemory(memoryStream.ToArray());
+                    }
+                }
+            }
         }
     }
 }
