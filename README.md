@@ -1,14 +1,15 @@
 # iSurvivedBonelab
 ## Description
-BLSurvival or iSurvivedBonelab is a WIP modification for BoneLab utilizing MelonLoader (PC only). The goal of this mod is to allow modders to incorporate traditional survival elements into their levels and spawnables, while also giving the user the choice to configure everything and opt in/out at any point.  
+BLSurvival or iSurvivedBonelab is a WIP modification for BONELAB utilizing MelonLoader (PC only). The goal of this mod is to allow other modders to incorporate traditional survival elements into their levels and spawnables, while also giving the user the choice to configure everything and opt in/out at any point.  
 
-## Installation
-1) Install MelonLoader for Bonelab
-2) Place iSurvivedBonelab.dll in your MelonLoader mods folder.
-3) Place BLSurvivalAssets (the folder) in your LocalLow/StressLevelZero/BONELAB mods folder
+## Installation (No releases yet)
+1) Install MelonLoader for BONELAB
+2) Download iSurvivedBonelab.dll and TheUltimateNuke.BLSurvivalAssets.zip from the Releases section or Thunderstore.
+3) Place iSurvivedBonelab.dll in your MelonLoader mods folder.
+4) Extract TheUltimateNuke.BLSurvivalAssets to your LocalLow/StressLevelZero/BONELAB mods folder
 
 ## Requirements
-- BoneLab
+- BONELAB
 - [MelonLoader](https://melonwiki.xyz/)
 - [BoneLib](https://bonelab.thunderstore.io/package/gnonme/BoneLib/)
 
@@ -20,7 +21,7 @@ BLSurvival or iSurvivedBonelab is a WIP modification for BoneLab utilizing Melon
 - HUD, follows hand of choice
 
 ### To-Do
-- Fully extendable needs system with support for custom consumables.
+- Extendable needs system with support for custom consumables.
 - Disease system with support for modders to add custom diseases, causes, and effects.
 - Temperature system with support for level creators to add trigger-based temperature volumes.
 - Crafting system with support for custom recipes, workbenches, and resources.
@@ -32,3 +33,4 @@ BLSurvival or iSurvivedBonelab is a WIP modification for BoneLab utilizing Melon
 - Stamina system (hitting things depletes stamina, makes you weaker when fully depleted)
 - All systems compatible with UltEvents
 - Full wiki documentation
+- Enabling/Disabling the whole mod depending on the level or user preferences
