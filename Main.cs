@@ -29,19 +29,26 @@ namespace iSurvivedBonelab
 
             if (Prefs.autoEnableEnt.Value)
             {
+
+                // Listen out for Bonelib.Hooking events
+                Hooking.OnLevelUnloaded += OnLevelUnloaded;
+                Hooking.OnLevelInitialized += OnLevelInitialized;
+            }
+        }
+
+        private void OnLevelInitialized(LevelInfo obj)
+        {
+            if (hud == null)
+            {
                 // prepare the hud bundle
                 MenuStuff.HudBundleStuff.Init();
 
                 // spawn the hud bundle
                 hud = Object.Instantiate(MenuStuff.HudBundleStuff.FindBundleObject("BLSurvivalHUD"));
                 Object.DontDestroyOnLoad(hud);
-
-                mouth = CreateMouth();
-
-                // Listen out for Bonelib.Hooking events
-                Hooking.OnLevelUnloaded += OnLevelUnloaded;
-                //Hooking.OnLevelInitialized += OnLevelInitialized;
             }
+            mouth = CreateMouth();
+
         }
 
         public override void OnUpdate()
@@ -73,7 +80,6 @@ namespace iSurvivedBonelab
 
             mouth.transform.parent = Player.playerHead;
             mouth.transform.localPosition = Vector3.zero + Player.playerHead.forward; // TODO: add config for this
-            mouth.tag = "Mouth";
             BoxCollider mouthTrigger = mouth.AddComponent<BoxCollider>();
             mouthTrigger.isTrigger = true;
             mouthTrigger.size = new Vector3(0.2f, 0.2f, 0.2f);

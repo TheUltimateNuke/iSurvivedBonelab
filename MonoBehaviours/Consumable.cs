@@ -27,7 +27,7 @@ namespace iSurvivedBonelab.MonoBehaviours
         public UltEvent<Collider, Consumable> onConsumed;
         public UltEvent<Collider, Consumable> onBite;
 
-        public string mouthTag = "Mouth";
+        public string mouthName = "Mouth";
 
         private int _curBites;
 
@@ -62,7 +62,7 @@ namespace iSurvivedBonelab.MonoBehaviours
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag(mouthTag))
+            if (other.CompareTag(mouthName))
             {
                 Consume(other);
             }
