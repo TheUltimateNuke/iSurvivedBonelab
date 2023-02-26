@@ -1,7 +1,4 @@
-﻿using iSurvivedBonelab.MonoBehaviours;
-using MelonLoader;
-using SLZ.UI;
-using System;
+﻿using MelonLoader;
 using UnityEngine;
 using UnityEngine.UI;
 
