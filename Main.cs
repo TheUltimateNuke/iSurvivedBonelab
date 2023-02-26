@@ -38,15 +38,12 @@ namespace iSurvivedBonelab
 
         private void OnLevelInitialized(LevelInfo obj)
         {
-            if (hud == null)
-            {
-                // prepare the hud bundle
-                MenuStuff.HudBundleStuff.Init();
+            // prepare the hud bundle
+            MenuStuff.HudBundleStuff.Init();
 
-                // spawn the hud bundle
-                hud = Object.Instantiate(MenuStuff.HudBundleStuff.FindBundleObject("BLSurvivalHUD"));
-                Object.DontDestroyOnLoad(hud);
-            }
+            // spawn the hud bundle
+            hud = Object.Instantiate(MenuStuff.HudBundleStuff.FindBundleObject("BLSurvivalHUD"));
+
             mouth = CreateMouth();
 
         }

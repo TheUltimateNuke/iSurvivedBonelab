@@ -125,10 +125,10 @@ namespace iSurvivedBonelab
         public static class HudBundleStuff
         {
             private static AssetBundle _bundle;
-            private static System.Collections.Generic.List<GameObject> _bundleObjects;
+            private static List<GameObject> _bundleObjects;
 
             public static AssetBundle bundle => _bundle;
-            public static System.Collections.Generic.IReadOnlyList<GameObject> BundleObjects { get => _bundleObjects.AsReadOnly(); }
+            public static IReadOnlyList<GameObject> BundleObjects { get => _bundleObjects.AsReadOnly(); }
 
             public static void Init()
             {

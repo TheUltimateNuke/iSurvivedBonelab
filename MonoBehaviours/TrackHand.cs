@@ -24,7 +24,7 @@ namespace iSurvivedBonelab.MonoBehaviours
                         transform.parent = Player.rightHand.transform;
                         break;
                 }
-                transform.localPosition = Vector3.zero + Prefs.hudOffsetEnt.Value;
+                transform.localPosition = Prefs.hudOffsetEnt.Value;
             }
         }
     }
