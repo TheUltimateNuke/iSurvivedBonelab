@@ -1,10 +1,13 @@
 ﻿using iSurvivedBonelab.MonoBehaviours;
+using MelonLoader;
 using SLZ.UI;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace iSurvivedBonelab
 {
+    [RegisterTypeInIl2Cpp]
     [System.Serializable]
     public class Need
     {

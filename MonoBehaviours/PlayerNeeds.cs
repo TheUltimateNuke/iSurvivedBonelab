@@ -1,12 +1,17 @@
 ﻿using BoneLib;
+using System;
+using MelonLoader;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace iSurvivedBonelab.MonoBehaviours
 {
     // TODO: On HUD gameObject
+    [RegisterTypeInIl2Cpp]
     public class PlayerNeeds : MonoBehaviour
     {
+        public PlayerNeeds(IntPtr ptr) : base(ptr) { }
+
         public List<Need> needs;
 
         public Need GetNeed(string name)

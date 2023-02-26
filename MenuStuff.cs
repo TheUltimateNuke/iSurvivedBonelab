@@ -6,9 +6,11 @@ using System.Reflection;
 using UnhollowerBaseLib;
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 namespace iSurvivedBonelab
 {
+    [RegisterTypeInIl2Cpp]
     public class NeedEle
     {
         public SubPanelElement subPanelEle;
@@ -59,6 +61,7 @@ namespace iSurvivedBonelab
         }
     }
 
+    [RegisterTypeInIl2Cpp]
     internal static class MenuStuff
     {
         public static Color menuColor = new Color(173, 113, 0);

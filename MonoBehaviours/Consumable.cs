@@ -6,8 +6,11 @@ using UnityEngine;
 
 namespace iSurvivedBonelab.MonoBehaviours
 {
+    [RegisterTypeInIl2Cpp]
     public class Consumable : MonoBehaviour
     {
+        public Consumable(IntPtr ptr) : base(ptr) { }
+
         public string needDisplayName;
 
         // TODO: Soon maybe
