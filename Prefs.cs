@@ -4,7 +4,6 @@ using UnityEngine;
 namespace iSurvivedBonelab
 {
     [System.Serializable]
-    [RegisterTypeInIl2Cpp]
     public class NeedPref
     {
         public MelonPreferences_Entry<bool> enabledEnt;

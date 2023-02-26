@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 namespace iSurvivedBonelab
 {
-    [RegisterTypeInIl2Cpp]
     [System.Serializable]
     public class Need
     {
