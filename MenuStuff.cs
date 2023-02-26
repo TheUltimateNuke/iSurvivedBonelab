@@ -90,8 +90,7 @@ namespace iSurvivedBonelab
             _hudTypeEle = hud_categ.CreateIntElement("Hud Type", menuColor, Prefs.hudTypeEnt.Value, 1, 0, 1);
             _hudHandEle = hud_categ.CreateIntElement("Hud Hand", menuColor, Prefs.hudHandEnt.Value, 1, 0, 1);
 
-            // Create settings subpanels for each system
-            // Need Settings
+            // Need settings are managed in the NeedPref, NeedEle, and Need classes
 
             // Temperature Settings
             SubPanelElement tempur_categ = root_categ.CreateSubPanel("Temperature Settings", menuColor);

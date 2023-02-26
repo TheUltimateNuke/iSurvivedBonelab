@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace iSurvivedBonelab.MonoBehaviours
 {
-    // TODO: On HUD gameObject
     [RegisterTypeInIl2Cpp]
     public class TrackHand : MonoBehaviour
     {

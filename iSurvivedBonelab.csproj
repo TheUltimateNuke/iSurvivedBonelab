@@ -99,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MenuStuff.cs" />
+    <Compile Include="MonoBehaviours\Gauge.cs" />
     <Compile Include="MonoBehaviours\PlayerNeeds.cs" />
     <Compile Include="Need.cs" />
     <Compile Include="MonoBehaviours\TrackHand.cs" />
@@ -107,7 +108,9 @@
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Assets\gaugetemplate" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\blsurvivalhud" />
   </ItemGroup>

@@ -53,13 +53,6 @@ namespace iSurvivedBonelab
             MenuStuff.UpdateSettings();
         }
 
-        // Enable mod if the level has empty GameObject named BLSURVIVAL_AUTOENABLE or autoEnable toggled on
-        public static bool CheckEnabled()
-        {
-            if (Prefs.autoEnableEnt.Value || GameObject.Find("BLSURVIVAL_AUTOENABLE")) { return true; }
-            else { return false; }
-        }
-
         // Save Melon Preferences on unload of a level or the whole mod
         private void OnLevelUnloaded()
         {
