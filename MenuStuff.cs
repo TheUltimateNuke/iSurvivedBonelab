@@ -60,7 +60,7 @@ namespace iSurvivedBonelab
         }
     }
 
-    internal static class MenuStuff
+    public static class MenuStuff
     {
         public static Color menuColor = new Color(173, 113, 0);
 
@@ -76,7 +76,7 @@ namespace iSurvivedBonelab
         private static IntElement _hudTypeEle;
 
 
-        internal static void CreateElements()
+        public static void CreateElements()
         {
             // Create root categ
             root_categ = MenuManager.CreateCategory("BLSurvival", menuColor);
@@ -104,7 +104,7 @@ namespace iSurvivedBonelab
             _autoEnableEle = root_categ.CreateBoolElement("Enable Mod", menuColor, true);
         }
 
-        internal static void UpdateSettings()
+        public static void UpdateSettings()
         {
             // Update the prefs according to the BoneMenu element values
 

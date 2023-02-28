@@ -37,6 +37,9 @@
     <Reference Include="BoneLib">
       <HintPath>..\BoneLib.dll</HintPath>
     </Reference>
+    <Reference Include="FieldInjector">
+      <HintPath>..\..\..\..\..\..\Software\Oculus\Software\Software\stress-level-zero-inc-bonelab\Mods\FieldInjector.dll</HintPath>
+    </Reference>
     <Reference Include="SLZ.Marrow">
       <HintPath>..\..\..\..\..\..\Software\Oculus\Software\Software\stress-level-zero-inc-bonelab\MelonLoader\Managed\SLZ.Marrow.dll</HintPath>
     </Reference>
@@ -109,7 +112,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\gaugetemplate" />
+    <EmbeddedResource Include="Assets\gaugetemplate" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\blsurvivalhud" />

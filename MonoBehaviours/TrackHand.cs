@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace iSurvivedBonelab.MonoBehaviours
 {
-    [RegisterTypeInIl2Cpp]
     public class TrackHand : MonoBehaviour
     {
         public TrackHand(IntPtr ptr) : base(ptr) { }

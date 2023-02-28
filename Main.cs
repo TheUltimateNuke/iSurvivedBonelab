@@ -1,4 +1,5 @@
 ﻿using BoneLib;
+using iSurvivedBonelab.MonoBehaviours;
 using MelonLoader;
 using UnityEngine;
 
@@ -15,6 +16,14 @@ namespace iSurvivedBonelab
     {
         public static GameObject hud;
         public static GameObject mouth;
+
+        public override void OnApplicationStart()
+        {
+            FieldInjector.SerialisationHandler.Inject<Consumable>();
+            FieldInjector.SerialisationHandler.Inject<Gauge>();
+            FieldInjector.SerialisationHandler.Inject<PlayerNeeds>();
+            FieldInjector.SerialisationHandler.Inject<TrackHand>();
+        }
 
         public override void OnInitializeMelon()
         {

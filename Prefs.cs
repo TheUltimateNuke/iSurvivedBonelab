@@ -52,25 +52,25 @@ namespace iSurvivedBonelab
         }
     }
 
-    internal static class Prefs
+    public static class Prefs
     {
         //private static string savePath = MelonUtils.UserDataDirectory + "/TheUltimateNuke/iSurvivedBonelab.cfg";
 
-        internal static MelonPreferences_Category root_categ;
+        public static MelonPreferences_Category root_categ;
 
-        internal static MelonPreferences_Entry<bool> enabledEnt;
-        internal static MelonPreferences_Entry<bool> autoEnableEnt;
-        internal static MelonPreferences_Entry<bool> debugEnt;
+        public static MelonPreferences_Entry<bool> enabledEnt;
+        public static MelonPreferences_Entry<bool> autoEnableEnt;
+        public static MelonPreferences_Entry<bool> debugEnt;
 
-        internal static MelonPreferences_Entry<bool> hudEnabledEnt;
-        internal static MelonPreferences_Entry<float> hudOffsetXEnt;
-        internal static MelonPreferences_Entry<float> hudOffsetYEnt;
-        internal static MelonPreferences_Entry<float> hudOffsetZEnt;
-        internal static MelonPreferences_Entry<Vector3> hudOffsetEnt;
-        internal static MelonPreferences_Entry<int> hudHandEnt;
-        internal static MelonPreferences_Entry<int> hudTypeEnt;
+        public static MelonPreferences_Entry<bool> hudEnabledEnt;
+        public static MelonPreferences_Entry<float> hudOffsetXEnt;
+        public static MelonPreferences_Entry<float> hudOffsetYEnt;
+        public static MelonPreferences_Entry<float> hudOffsetZEnt;
+        public static MelonPreferences_Entry<Vector3> hudOffsetEnt;
+        public static MelonPreferences_Entry<int> hudHandEnt;
+        public static MelonPreferences_Entry<int> hudTypeEnt;
 
-        internal static void CreatePrefs()
+        public static void CreatePrefs()
         {
             root_categ = MelonPreferences.CreateCategory("BLSurvivalSettings");
 
@@ -90,14 +90,14 @@ namespace iSurvivedBonelab
             // Need prefs are managed in NeedPref
         }
 
-        internal static void SaveMelonPrefs()
+        public static void SaveMelonPrefs()
         {
             MelonPreferences_Category root_categ = MelonPreferences.GetCategory("BLSurvivalSettings");
 
             root_categ.SaveToFile();
         }
 
-        internal static void LoadMelonPrefs()
+        public static void LoadMelonPrefs()
         {
             MelonPreferences_Category root_categ = MelonPreferences.GetCategory("BLSurvivalSettings");
 
